@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import PageLayout from "../common/PageLayout";
 import styles from "./AuthWrapper.module.scss";
-import {
-  Avatar,
-  Button,
-  Divider,
-  Grid,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Avatar, Divider, Paper, Typography } from "@mui/material";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 
 function AuthWrapper({ children }) {
@@ -26,7 +18,7 @@ function AuthWrapper({ children }) {
               <Typography align="center" component="h1" variant="h5">
                 Share Buddy
               </Typography>
-              <Divider variant="middle" className={styles.divider} />
+              <Divider variant="fullWidth" className={styles.divider} />
               {children}
             </Paper>
           </div>
