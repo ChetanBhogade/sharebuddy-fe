@@ -1,0 +1,49 @@
+@import "../../styles/variables";
+
+.backgroundContainer {
+  background-image: url("/images/loginBg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  background-attachment: fixed;
+}
+
+.pageInfo {
+  z-index: 2;
+  overflow: auto;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.newLayout {
+  // border: 1px solid black;
+  width: auto;
+  margin: 0 auto;
+
+  @media (min-width: $md) {
+    width: 600px;
+    // border: 4px solid black;
+  }
+}
+
+.paper {
+  padding: 1.5em;
+  margin: 1.5em 0;
+}
+
+.divider {
+  margin: 1em 0;
+}
+
+.avatar {
+  margin: 1em auto;
+  background-color: $primary-color;
+}
+
+// first name last name email mobile aur password
