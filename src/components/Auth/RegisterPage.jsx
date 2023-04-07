@@ -3,10 +3,13 @@ import AuthWrapper from "./AuthWrapper";
 import { Button, Grid, TextField } from "@mui/material";
 import Link from "next/link";
 
-function LoginPage() {
+function RegisterPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    firstName: "",
+    lastName: "",
+    mobile: "",
   });
 
   const formSubmit = (event) => {
@@ -18,6 +21,57 @@ function LoginPage() {
     <AuthWrapper>
       <form onSubmit={formSubmit}>
         <Grid container spacing={2}>
+          <Grid item xs={6}>
+            <TextField
+              id="firstName"
+              label="First Name"
+              variant="outlined"
+              fullWidth
+              autoComplete="firstName"
+              type="text"
+              value={formData.firstName}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  firstName: e.target.value,
+                });
+              }}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              id="lastName"
+              label="Last Name"
+              variant="outlined"
+              fullWidth
+              autoComplete="lastName"
+              type="text"
+              value={formData.lastName}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  lastName: e.target.value,
+                });
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="mobile"
+              label="Mobile"
+              variant="outlined"
+              fullWidth
+              autoComplete="mobile"
+              type="number"
+              value={formData.mobile}
+              onChange={(e) => {
+                setFormData({
+                  ...formData,
+                  mobile: e.target.value,
+                });
+              }}
+            />
+          </Grid>
           <Grid item xs={12}>
             <TextField
               id="email"
@@ -58,8 +112,8 @@ function LoginPage() {
             </Button>
           </Grid>
           <Grid item xs={12}>
-            <Link href="/register" variant="body2">
-              {"Don't have an account? Register"}
+            <Link href="/login" variant="body2">
+              {"Already have an account? Login"}
             </Link>
           </Grid>
         </Grid>
@@ -68,4 +122,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default RegisterPage;
