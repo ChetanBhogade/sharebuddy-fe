@@ -4,9 +4,14 @@ import { Button, Grid, TextField } from "@mui/material";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/services/auth";
+import validator from "validator";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [errorStates, setErrorStates] = useState({
     email: "",
     password: "",
   });
@@ -18,15 +23,59 @@ function LoginPage() {
     },
   });
 
+  const validateForm = (formData) => {
+    console.log("validating form: ", formData);
+    if (
+      formData &&
+      formData.email?.length > 1 &&
+      formData.password?.length > 1
+    ) {
+      if (!validator.isEmail(formData.email)) {
+        setErrorStates({
+          ...errorStates,
+          email: "Please enter valid email address",
+        });
+        return false;
+      } else {
+        setErrorStates({
+          ...errorStates,
+          email: "",
+        });
+      }
+
+      if (formData.password?.length < 8) {
+        setErrorStates({
+          ...errorStates,
+          password: "Password should be 8 characters long",
+        });
+        return false;
+      } else {
+        setErrorStates({
+          ...errorStates,
+          password: "",
+        });
+      }
+
+      setErrorStates({
+        email: "",
+        password: "",
+      });
+      return true;
+    }
+    return false;
+  };
+
   const formSubmit = (event) => {
     event.preventDefault();
     console.log("Form submitted....", event, formData);
 
-    const newFormData = new FormData();
-    newFormData.append("username", formData.email);
-    newFormData.append("password", formData.password);
+    if (validateForm(formData)) {
+      const newFormData = new FormData();
+      newFormData.append("username", formData.email);
+      newFormData.append("password", formData.password);
 
-    mutation.mutate(newFormData);
+      mutation.mutate(newFormData);
+    }
   };
 
   return (
@@ -41,6 +90,8 @@ function LoginPage() {
               fullWidth
               autoComplete="email"
               type="email"
+              error={errorStates.email.length > 1}
+              helperText={errorStates.email}
               value={formData.email}
               onChange={(e) => {
                 setFormData({
@@ -57,6 +108,8 @@ function LoginPage() {
               variant="outlined"
               type="password"
               fullWidth
+              error={errorStates.password.length > 1}
+              helperText={errorStates.password}
               value={formData.password}
               onChange={(e) => {
                 setFormData({
