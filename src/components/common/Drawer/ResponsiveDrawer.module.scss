@@ -1,0 +1,61 @@
+@import "../../../styles/variables";
+
+.root {
+  display: flex;
+}
+
+.appBar {
+  box-shadow: none;
+  background-color: transparent;
+  color: #555555;
+
+  @media (min-width: $sm) {
+    width: calc(100% - $drawer-width);
+    margin-left: $drawer-width;
+  }
+}
+
+.menuButton {
+  margin-right: 2em;
+  @media (min-width: $sm) {
+    display: none;
+  }
+}
+
+.drawer {
+  @media (min-width: $sm) {
+    width: $drawer-width;
+    flex-shrink: 0;
+  }
+}
+
+.drawerPaper {
+  width: $drawer-width;
+  background-color: $primary-color;
+  color: #ffffff;
+}
+
+.content {
+  flex-grow: 1;
+  padding: 3em;
+}
+
+.contentContainer {
+  min-height: calc(100vh - 153px);
+}
+
+.logo {
+  position: relative;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebarInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1em;
+}

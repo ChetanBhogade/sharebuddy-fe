@@ -23,7 +23,7 @@ function LoginPage() {
     console.log("Form submitted....", event, formData);
 
     const newFormData = new FormData();
-    newFormData.append("email", formData.email);
+    newFormData.append("username", formData.email);
     newFormData.append("password", formData.password);
 
     mutation.mutate(newFormData);
