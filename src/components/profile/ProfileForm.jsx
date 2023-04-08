@@ -1,5 +1,9 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, IconButton, TextField } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import React, { useState } from "react";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import ProfileUserCard from "./ProfileUserCard";
+import { PhotoCamera } from "@mui/icons-material";
 
 function ProfileForm() {
   const [formData, setFormData] = useState({
@@ -7,6 +11,7 @@ function ProfileForm() {
     firstName: "",
     lastName: "",
     mobile: "",
+    dob: "",
   });
 
   const formSubmit = (event) => {
@@ -92,6 +97,39 @@ function ProfileForm() {
                 });
               }}
             />
+          </Grid>
+          <Grid item xs={6}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DatePicker
+                label="Date Of Birth"
+                value={formData.dob}
+                format="DD/MM/YYYY"
+                onChange={(newValue) =>
+                  setFormData({
+                    ...formData,
+                    dob: newValue,
+                  })
+                }
+              />
+            </LocalizationProvider>
+          </Grid>
+          <Grid
+            xs={6}
+            flexDirection={"row"}
+            item
+            container
+            justifyContent="flex-start"
+            alignItems="center"
+          >
+            <IconButton
+              color="primary"
+              aria-label="upload picture"
+              component="label"
+            >
+              <input hidden accept="image/*" type="file" />
+              <PhotoCamera />
+            </IconButton>
+            <span>Update Image</span>
           </Grid>
           <Grid item xs={12}>
             <Button variant="contained" fullWidth type="submit" color="primary">

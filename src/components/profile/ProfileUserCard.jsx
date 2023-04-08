@@ -5,10 +5,15 @@ import React from "react";
 import styles from "./Profile.module.scss";
 import { Check } from "@mui/icons-material";
 
-function ProfileUserCard({ isFollowing = true, showActionBtn = true }) {
+function ProfileUserCard({
+  isFollowing = true,
+  showActionBtn = true,
+  elevation = 4,
+  username = "Dummy User",
+}) {
   return (
     <div>
-      <Paper elevation={4} className={styles.profileUserCardPaper}>
+      <Paper elevation={elevation} className={styles.profileUserCardPaper}>
         <div className={styles.nameWrapper}>
           <div className={styles.imgWrapper}>
             <Image
@@ -18,7 +23,7 @@ function ProfileUserCard({ isFollowing = true, showActionBtn = true }) {
               height={50}
             />
           </div>
-          <span className={styles.username}>Dummy User</span>
+          <span className={styles.username}>{username}</span>
         </div>
         {showActionBtn && (
           <div>
