@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import AuthWrapper from "./AuthWrapper";
 import { Button, Grid, TextField } from "@mui/material";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { registerUser } from "@/services/auth";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -12,9 +14,26 @@ function RegisterPage() {
     mobile: "",
   });
 
+  const mutation = useMutation({
+    mutationFn: (data) => registerUser(data),
+    onSuccess: (data) => {
+      console.log("mutation registerUser on success: ", data);
+    },
+  });
+
   const formSubmit = (event) => {
     event.preventDefault();
     console.log("Form submitted....", event, formData);
+
+    const newFormData = new FormData();
+    newFormData.append("first_name", formData.firstName);
+    newFormData.append("last_name", formData.lastName);
+    newFormData.append("email", formData.email);
+    newFormData.append("mobile_number", formData.mobile);
+    newFormData.append("password", formData.password);
+    newFormData.append("confirm_password", formData.password);
+
+    mutation.mutate(newFormData);
   };
 
   return (
@@ -105,7 +124,6 @@ function RegisterPage() {
               }}
             />
           </Grid>
-
           <Grid item xs={12}>
             <Button variant="contained" fullWidth type="submit" color="primary">
               Login

@@ -11,7 +11,7 @@ function AuthWrapper({ children }) {
         <div className={styles.backgroundContainer} />
         <div className={styles.pageInfo}>
           <div className={styles.newLayout}>
-            <Paper className={styles.paper}>
+            <Paper elevation={5} className={styles.paper}>
               <Avatar className={styles.avatar}>
                 <MeetingRoomIcon />
               </Avatar>

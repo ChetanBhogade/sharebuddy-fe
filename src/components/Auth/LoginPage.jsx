@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import AuthWrapper from "./AuthWrapper";
 import { Button, Grid, TextField } from "@mui/material";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import { loginUser } from "@/services/auth";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -9,9 +11,22 @@ function LoginPage() {
     password: "",
   });
 
+  const mutation = useMutation({
+    mutationFn: (data) => loginUser(data),
+    onSuccess: (data) => {
+      console.log("mutation loginUser on success: ", data);
+    },
+  });
+
   const formSubmit = (event) => {
     event.preventDefault();
     console.log("Form submitted....", event, formData);
+
+    const newFormData = new FormData();
+    newFormData.append("email", formData.email);
+    newFormData.append("password", formData.password);
+
+    mutation.mutate(newFormData);
   };
 
   return (
