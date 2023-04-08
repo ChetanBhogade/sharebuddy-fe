@@ -1,0 +1,21 @@
+.profileHeaderPaper {
+  padding: 1em;
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 0;
+}
+
+.imgWrapper {
+  border: 1px solid black;
+  display: flex;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profileHeaderUsername {
+  font-size: 18px;
+  margin: 6px 0;
+}

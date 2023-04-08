@@ -25,7 +25,7 @@ function DrawerContent() {
           <ListItemIcon>
             <Send style={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Sent mail" />
+          <ListItemText primary="Sent Message" />
         </ListItemButton>
         <ListItemButton>
           <ListItemIcon>

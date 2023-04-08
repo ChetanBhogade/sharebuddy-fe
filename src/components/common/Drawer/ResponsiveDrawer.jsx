@@ -3,6 +3,7 @@ import styles from "./ResponsiveDrawer.module.scss";
 import {
   AppBar,
   CssBaseline,
+  Divider,
   Drawer,
   Hidden,
   IconButton,
@@ -78,6 +79,7 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
       <main className={styles.content}>
         <div className={theme.mixins.toolbar} />
         <div className={styles.contentContainer}>{children}</div>
+        <Divider />
         <Footer />
       </main>
     </div>
