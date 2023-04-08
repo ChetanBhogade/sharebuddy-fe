@@ -1,3 +1,5 @@
+@import "../../styles/variables";
+
 .profileHeaderPaper {
   padding: 1em;
   margin-top: 1em;
@@ -9,7 +11,6 @@
 }
 
 .imgWrapper {
-  border: 1px solid black;
   display: flex;
   border-radius: 50%;
   overflow: hidden;
@@ -18,4 +19,26 @@
 .profileHeaderUsername {
   font-size: 18px;
   margin: 6px 0;
+}
+
+.profileUserCardPaper {
+  padding: 0.7em 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nameWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.username {
+  margin-left: 1em;
+}
+
+.followedSection {
+  display: flex;
+  align-items: center;
+  color: $success-color;
 }

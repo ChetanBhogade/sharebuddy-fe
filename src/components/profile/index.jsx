@@ -4,6 +4,8 @@ import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import ProfileHeader from "./ProfileHeader";
 import TabPanel from "../common/TabPanel";
 import ProfileForm from "./ProfileForm";
+import ProfileFollowers from "./ProfileFollowers";
+import ProfileFriends from "./ProfileFriends";
 
 function ProfilePage() {
   const [tabValue, setTabValue] = useState(0);
@@ -20,10 +22,10 @@ function ProfilePage() {
           <ProfileForm />
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
-          Item Two
+          <ProfileFollowers />
         </TabPanel>
         <TabPanel value={tabValue} index={2}>
-          Item Three
+          <ProfileFriends />
         </TabPanel>
         {/* <h1>Profile Page of user</h1> */}
       </ResponsiveDrawer>

@@ -37,7 +37,12 @@
 
 .content {
   flex-grow: 1;
-  padding: 3em;
+  padding: 2em;
+  @media (min-width: $sm) {
+    padding: 3em;
+    width: $drawer-width;
+    flex-shrink: 0;
+  }
 }
 
 .contentContainer {

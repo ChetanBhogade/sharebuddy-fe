@@ -3,11 +3,18 @@ import DrawerToolbar from "./DrawerToolbar";
 import {
   Divider,
   List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import { AccountBox, Drafts, Inbox, Send } from "@mui/icons-material";
+import {
+  AccountBox,
+  Drafts,
+  ExitToApp,
+  Inbox,
+  Send,
+} from "@mui/icons-material";
 
 function DrawerContent() {
   return (
@@ -38,6 +45,15 @@ function DrawerContent() {
             <Inbox style={{ color: "#fff" }} />
           </ListItemIcon>
           <ListItemText primary="Inbox" />
+        </ListItemButton>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton>
+          <ListItemIcon>
+            <ExitToApp style={{ color: "#fff" }} />
+          </ListItemIcon>
+          <ListItemText primary="Log out" />
         </ListItemButton>
       </List>
     </div>

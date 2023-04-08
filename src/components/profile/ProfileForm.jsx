@@ -4,7 +4,6 @@ import React, { useState } from "react";
 function ProfileForm() {
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
     firstName: "",
     lastName: "",
     mobile: "",
@@ -18,8 +17,6 @@ function ProfileForm() {
     newFormData.append("last_name", formData.lastName);
     newFormData.append("email", formData.email);
     newFormData.append("mobile_number", formData.mobile);
-    newFormData.append("password", formData.password);
-    newFormData.append("confirm_password", formData.password);
 
     console.log("Form submitted for update....", event, formData, newFormData);
   };
@@ -92,22 +89,6 @@ function ProfileForm() {
                 setFormData({
                   ...formData,
                   email: e.target.value,
-                });
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              id="password"
-              label="Password"
-              variant="outlined"
-              type="password"
-              fullWidth
-              value={formData.password}
-              onChange={(e) => {
-                setFormData({
-                  ...formData,
-                  password: e.target.value,
                 });
               }}
             />
