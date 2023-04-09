@@ -1,0 +1,13 @@
+@import "../../styles/variables";
+
+.filterArea {
+  margin-top: 1.5em;
+}
+
+.sortByText {
+  margin-bottom: 5px;
+  @media (min-width: $md) {
+    margin-bottom: 0;
+    margin-right: 5px;
+  }
+}

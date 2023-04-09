@@ -14,19 +14,29 @@ import {
   ExitToApp,
   Inbox,
   Send,
+  ShoppingCart,
 } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
 function DrawerContent() {
+  const router = useRouter();
+
   return (
     <div>
       <DrawerToolbar />
       <Divider />
       <List component="nav" aria-labelledby="navbar-list">
-        <ListItemButton>
+        <ListItemButton onClick={() => router.push("/profile")}>
           <ListItemIcon>
             <AccountBox style={{ color: "#fff" }} />
           </ListItemIcon>
           <ListItemText primary="Profile" />
+        </ListItemButton>
+        <ListItemButton onClick={() => router.push("/shop")}>
+          <ListItemIcon>
+            <ShoppingCart style={{ color: "#fff" }} />
+          </ListItemIcon>
+          <ListItemText primary="Shop" />
         </ListItemButton>
         <ListItemButton>
           <ListItemIcon>
