@@ -55,7 +55,7 @@ export const makeAuthPostCall = async (url, formData) => {
   }
 };
 
-export const makeAuthGetCall = async (url, formData) => {
+export const makeAuthGetCall = async (url) => {
   try {
     const token = localStorage.getItem("sharebuddyToken");
     const response = await axios.get(`${backendAPI}${url}`, {

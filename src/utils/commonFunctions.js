@@ -10,3 +10,24 @@ export const getErrorMessage = (errorObj) => {
   }
   return "Something Went Wrong!!!";
 };
+
+export const sortListOfObjects = (list, property, isAscending = true) =>
+  list.sort((a, b) => {
+    if (typeof a[property] === "number") {
+      return isAscending
+        ? a[property] - b[property]
+        : b[property] - a[property];
+    } else {
+      return isAscending
+        ? a[property] < b[property]
+          ? -1
+          : a[property] > b[property]
+          ? 1
+          : 0
+        : a[property] > b[property]
+        ? -1
+        : a[property] < b[property]
+        ? 1
+        : 0;
+    }
+  });

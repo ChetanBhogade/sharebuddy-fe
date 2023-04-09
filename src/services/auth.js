@@ -31,3 +31,7 @@ export const sendEmailOtp = (formData) => {
 export const sendSmsOtp = (formData) => {
   return makeAuthPostCall("send_sms_otp", formData);
 };
+
+export const getAllUsers = () => {
+  return makeAuthGetCall("get_all_users");
+};

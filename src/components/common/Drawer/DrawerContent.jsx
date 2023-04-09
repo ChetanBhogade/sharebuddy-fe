@@ -39,7 +39,7 @@ function DrawerContent() {
           </ListItemIcon>
           <ListItemText primary="Shop" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => router.push("/find-friends")}>
           <ListItemIcon>
             <PersonAdd style={{ color: "#fff" }} />
           </ListItemIcon>
