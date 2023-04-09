@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import AuthWrapper from "./AuthWrapper";
 import { Button, Grid, TextField } from "@mui/material";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { registerUser } from "@/services/auth";
 import validator from "validator";
+import { GlobalContext } from "@/contexts/GlobalContext";
+import { getErrorMessage } from "@/utils/commonFunctions";
+import { useRouter } from "next/router";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -22,10 +25,32 @@ function RegisterPage() {
     cPassword: "",
   });
 
+  const { setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
+  const router = useRouter();
+
   const mutation = useMutation({
     mutationFn: (data) => registerUser(data),
     onSuccess: (data) => {
       console.log("mutation registerUser on success: ", data);
+      setIsBackdropLoading(false);
+      if (data.code === 200) {
+        router.push("/login");
+      } else {
+        setSnackbar({
+          isOpen: true,
+          message: getErrorMessage(data),
+          severity: "error",
+        });
+      }
+    },
+    onError: (error) => {
+      console.log("mutation registerUser on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
     },
   });
 
@@ -105,6 +130,7 @@ function RegisterPage() {
     console.log("Form submitted....", event, formData);
 
     if (validateForm(formData)) {
+      setIsBackdropLoading(true);
       const newFormData = new FormData();
       newFormData.append("first_name", formData.firstName);
       newFormData.append("last_name", formData.lastName);

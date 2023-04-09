@@ -79,7 +79,7 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
       <main className={styles.content}>
         <div className={theme.mixins.toolbar} />
         <div className={styles.contentContainer}>{children}</div>
-        <Divider />
+        <Divider style={{ marginTop: 12 }} />
         <Footer />
       </main>
     </div>

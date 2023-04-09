@@ -6,13 +6,16 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 import "@/styles/globals.css";
+import GlobalContextProvider from "@/contexts/GlobalContext";
 
 const queryClient = new QueryClient();
 
 export default function App({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
+      <GlobalContextProvider>
+        <Component {...pageProps} />
+      </GlobalContextProvider>
     </QueryClientProvider>
   );
 }

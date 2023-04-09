@@ -8,7 +8,7 @@ export const makeGetCall = async (url) => {
     return response.data;
   } catch (error) {
     console.log("makeGetCall Error: ", error);
-    return error;
+    throw error;
   }
 };
 
@@ -19,7 +19,7 @@ export const makePostCall = async (url, data = {}) => {
     return response.data;
   } catch (error) {
     console.log("makePostCall Error: ", error);
-    return error;
+    throw error;
   }
 };
 
@@ -34,6 +34,39 @@ export const makePostCallWithFormData = async (url, formData) => {
     return response.data;
   } catch (error) {
     console.log("makePostCallWithFormData Error: ", error);
-    return error;
+    throw error;
+  }
+};
+
+export const makeAuthPostCall = async (url, formData) => {
+  try {
+    const token = localStorage.getItem("sharebuddyToken");
+    const response = await axios.post(`${backendAPI}${url}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("makePostCallWithFormData response: ", response);
+    return response.data;
+  } catch (error) {
+    console.log("makePostCallWithFormData Error: ", error);
+    throw error;
+  }
+};
+
+export const makeAuthGetCall = async (url, formData) => {
+  try {
+    const token = localStorage.getItem("sharebuddyToken");
+    const response = await axios.get(`${backendAPI}${url}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("makePostCallWithFormData response: ", response);
+    return response.data;
+  } catch (error) {
+    console.log("makePostCallWithFormData Error: ", error);
+    throw error;
   }
 };

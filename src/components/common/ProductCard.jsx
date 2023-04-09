@@ -12,6 +12,7 @@ function ProductCard() {
         <Image
           src={ImageUrls.product6}
           alt="product image"
+          priority
           style={{
             objectFit: "cover",
           }}

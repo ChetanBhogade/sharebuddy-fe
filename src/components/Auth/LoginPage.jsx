@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import AuthWrapper from "./AuthWrapper";
 import { Button, Grid, TextField } from "@mui/material";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "@/services/auth";
 import validator from "validator";
+import { GlobalContext } from "@/contexts/GlobalContext";
+import { getErrorMessage } from "@/utils/commonFunctions";
+import { useRouter } from "next/router";
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -16,10 +19,27 @@ function LoginPage() {
     password: "",
   });
 
+  const { setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
+  const router = useRouter();
+
   const mutation = useMutation({
     mutationFn: (data) => loginUser(data),
     onSuccess: (data) => {
       console.log("mutation loginUser on success: ", data);
+      if (data?.response?.refresh_token?.length > 1) {
+        localStorage.setItem("sharebuddyToken", data?.response?.access_token);
+        router.push("/");
+      }
+      setIsBackdropLoading(false);
+    },
+    onError: (error) => {
+      console.log("mutation loginUser on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
     },
   });
 
@@ -70,6 +90,7 @@ function LoginPage() {
     console.log("Form submitted....", event, formData);
 
     if (validateForm(formData)) {
+      setIsBackdropLoading(true);
       const newFormData = new FormData();
       newFormData.append("username", formData.email);
       newFormData.append("password", formData.password);
