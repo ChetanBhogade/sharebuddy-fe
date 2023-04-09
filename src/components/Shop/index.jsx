@@ -13,6 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import styles from "./Shop.module.scss";
+import ProductCard from "../common/ProductCard";
 
 function ShopPage() {
   const [sortBy, setSortBy] = useState("latest");
@@ -70,7 +71,24 @@ function ShopPage() {
             </FormControl>
           </Grid>
         </Grid>
-        <Divider style={{ marginTop: 20 }} />
+        <Divider style={{ marginTop: 20, marginBottom: 20 }} />
+        <Grid container gap={2} justifyContent="space-around">
+          <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
+            <ProductCard />
+          </Grid>
+          <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
+            <ProductCard />
+          </Grid>
+          <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
+            <ProductCard />
+          </Grid>
+          <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
+            <ProductCard />
+          </Grid>
+          <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
+            <ProductCard />
+          </Grid>
+        </Grid>
       </ResponsiveDrawer>
     </PageLayout>
   );

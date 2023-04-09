@@ -13,6 +13,7 @@ import {
   Drafts,
   ExitToApp,
   Inbox,
+  PersonAdd,
   Send,
   ShoppingCart,
 } from "@mui/icons-material";
@@ -40,9 +41,9 @@ function DrawerContent() {
         </ListItemButton>
         <ListItemButton>
           <ListItemIcon>
-            <Send style={{ color: "#fff" }} />
+            <PersonAdd style={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Sent Message" />
+          <ListItemText primary="Find Friend" />
         </ListItemButton>
         <ListItemButton>
           <ListItemIcon>
