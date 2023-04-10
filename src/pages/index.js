@@ -11,11 +11,7 @@ export default function Home() {
   const { setIsBackdropLoading, setSnackbar, setUser, user } =
     useContext(GlobalContext);
 
-  const {
-    isLoading,
-    data: userData,
-    error,
-  } = useQuery({
+  const { isLoading, data: userData } = useQuery({
     queryKey: ["getLoggedInUserDetails"],
     queryFn: getLoggedInUserDetails,
     onError: (error) => {
@@ -25,14 +21,15 @@ export default function Home() {
         message: getErrorMessage(error),
         severity: "error",
       });
-      setIsBackdropLoading(false);
       if (error?.response?.status === 401) {
+        setUser(null);
         router.push("/login");
       }
+      setIsBackdropLoading(false);
     },
   });
 
-  console.log("query response: ", { isLoading, userData, error });
+  console.log("query response: ", { isLoading, userData });
 
   const handleRedirect = (userData) => {
     setIsBackdropLoading(isLoading);

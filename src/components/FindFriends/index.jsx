@@ -5,7 +5,7 @@ import { Divider, Grid, TextField } from "@mui/material";
 import ProfileUserCard from "../profile/ProfileUserCard";
 import { useQuery } from "@tanstack/react-query";
 import { getAllUsers } from "@/services/auth";
-import { getErrorMessage } from "@/utils/commonFunctions";
+import { getErrorMessage, sortListOfObjects } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
 
 function FindFriendsPage() {
@@ -13,8 +13,8 @@ function FindFriendsPage() {
 
   const { setSnackbar } = useContext(GlobalContext);
 
-  const { isLoading, allUserData } = useQuery({
-    queryKey: "getAllUsers",
+  const { data: allUserDataResponse } = useQuery({
+    queryKey: ["getAllUsers"],
     queryFn: getAllUsers,
     onError: (error) => {
       console.log("getAllUsers on error: ", error);
@@ -25,6 +25,13 @@ function FindFriendsPage() {
       });
     },
   });
+
+  const filterUsers = (usersList) => {
+    return usersList.filter((user) => {
+      const firstName = user.first_name?.toLowerCase();
+      return firstName && firstName.indexOf(searchText) > -1;
+    });
+  };
 
   const handleOnSearchTextChange = (event) => {
     setSearchText(event.target.value);
@@ -55,15 +62,20 @@ function FindFriendsPage() {
           justifyContent="space-around"
           gap={2}
         >
-          <Grid item xs={12} md={4.5} lg={3.5}>
-            <ProfileUserCard username="Chetan Bhogade" />
-          </Grid>
-          <Grid item xs={12} md={4.5} lg={3.5}>
-            <ProfileUserCard />
-          </Grid>
-          <Grid item xs={12} md={4.5} lg={3.5}>
-            <ProfileUserCard />
-          </Grid>
+          {allUserDataResponse &&
+            filterUsers(
+              sortListOfObjects(allUserDataResponse?.response, "first_name")
+            ).map((userObj) => {
+              return (
+                !userObj.is_superuser && (
+                  <Grid key={userObj.user_id} item xs={12} md={4.5} lg={3.5}>
+                    <ProfileUserCard
+                      username={`${userObj.first_name} ${userObj.last_name}`}
+                    />
+                  </Grid>
+                )
+              );
+            })}
         </Grid>
       </ResponsiveDrawer>
     </PageLayout>

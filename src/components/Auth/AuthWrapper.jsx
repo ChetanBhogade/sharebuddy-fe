@@ -8,7 +8,6 @@ import { useRouter } from "next/router";
 
 function AuthWrapper({ children }) {
   const { user } = useContext(GlobalContext);
-  console.log("user on auth: ", user);
 
   const router = useRouter();
 

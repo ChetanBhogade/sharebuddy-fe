@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import DrawerToolbar from "./DrawerToolbar";
 import {
   Divider,
@@ -18,9 +18,12 @@ import {
   ShoppingCart,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { GlobalContext } from "@/contexts/GlobalContext";
 
 function DrawerContent() {
   const router = useRouter();
+
+  const { setUser } = useContext(GlobalContext);
 
   return (
     <div>
@@ -60,7 +63,13 @@ function DrawerContent() {
       </List>
       <Divider />
       <List>
-        <ListItemButton>
+        <ListItemButton
+          onClick={() => {
+            setUser(null);
+            localStorage.removeItem("sharebuddyToken");
+            router.push("/login");
+          }}
+        >
           <ListItemIcon>
             <ExitToApp style={{ color: "#fff" }} />
           </ListItemIcon>
