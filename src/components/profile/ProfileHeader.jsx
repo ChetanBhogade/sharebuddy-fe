@@ -1,9 +1,9 @@
 import { Box, Divider, Paper, Tab, Tabs, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import styles from "./Profile.module.scss";
 import Image from "next/image";
 import { ImageUrls } from "@/constants/images";
-import TabPanel from "../common/TabPanel";
+import { GlobalContext } from "@/contexts/GlobalContext";
 
 function a11yProps(index) {
   return {
@@ -13,15 +13,18 @@ function a11yProps(index) {
 }
 
 function ProfileHeader({ handleChange, value }) {
+  const { user } = useContext(GlobalContext);
+
   return (
     <div>
       <Paper elevation={2} className={styles.profileHeaderPaper}>
         <div className={styles.imgWrapper}>
           <Image
-            src={ImageUrls.defaultAvatar}
+            src={user?.profile_photo || ImageUrls.defaultAvatar}
             alt="Avatar"
             width={100}
             height={100}
+            priority
           />
         </div>
         <span className={styles.profileHeaderUsername}>Dummy User</span>

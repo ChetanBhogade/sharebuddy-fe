@@ -1,9 +1,9 @@
 import { Button, Grid, IconButton, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import ProfileUserCard from "./ProfileUserCard";
 import { PhotoCamera } from "@mui/icons-material";
+import { GlobalContext } from "@/contexts/GlobalContext";
 
 function ProfileForm() {
   const [formData, setFormData] = useState({
@@ -13,6 +13,8 @@ function ProfileForm() {
     mobile: "",
     dob: "",
   });
+
+  const { user } = useContext(GlobalContext);
 
   const formSubmit = (event) => {
     event.preventDefault();
@@ -25,6 +27,17 @@ function ProfileForm() {
 
     console.log("Form submitted for update....", event, formData, newFormData);
   };
+
+  useEffect(() => {
+    console.log("User details: ", user);
+    setFormData({
+      email: user?.email || "",
+      firstName: user?.first_name || "",
+      lastName: user?.last_name || "",
+      mobile: user?.mobile_number || "",
+      dob: user?.dob || "",
+    });
+  }, [user]);
 
   return (
     <div>
@@ -89,6 +102,7 @@ function ProfileForm() {
               fullWidth
               autoComplete="email"
               type="email"
+              disabled
               value={formData.email}
               onChange={(e) => {
                 setFormData({
