@@ -63,10 +63,10 @@ export const makeAuthGetCall = async (url) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("makePostCallWithFormData response: ", response);
+    console.log(`makeAuthGetCall ${url} response: `, response);
     return response.data;
   } catch (error) {
-    console.log("makePostCallWithFormData Error: ", error);
+    console.log(`makeAuthGetCall ${url} Error: `, error);
     throw error;
   }
 };

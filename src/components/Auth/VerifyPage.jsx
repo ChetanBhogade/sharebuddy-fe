@@ -224,7 +224,7 @@ function VerifyPage() {
             variant="outlined"
             onClick={() => {
               const newFormData = new FormData();
-              newFormData.append("otp", emailOtp);
+              newFormData.append("otp", mobileOtp);
               verifyMobileMutation.mutate(newFormData);
             }}
           >

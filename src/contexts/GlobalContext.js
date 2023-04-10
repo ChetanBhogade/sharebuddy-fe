@@ -26,7 +26,7 @@ function GlobalContextProvider({ children }) {
 
   useEffect(() => {
     if (user !== null) {
-      localStorage.setItem("sharebuddyUser", user);
+      localStorage.setItem("sharebuddyUser", JSON.stringify(user));
     }
   }, [user]);
 

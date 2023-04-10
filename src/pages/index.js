@@ -11,7 +11,11 @@ export default function Home() {
   const { setIsBackdropLoading, setSnackbar, setUser, user } =
     useContext(GlobalContext);
 
-  const { isLoading, userData, error } = useQuery({
+  const {
+    isLoading,
+    data: userData,
+    error,
+  } = useQuery({
     queryKey: ["getLoggedInUserDetails"],
     queryFn: getLoggedInUserDetails,
     onError: (error) => {
@@ -22,7 +26,7 @@ export default function Home() {
         severity: "error",
       });
       setIsBackdropLoading(false);
-      if (error.response.status === 401) {
+      if (error?.response?.status === 401) {
         router.push("/login");
       }
     },

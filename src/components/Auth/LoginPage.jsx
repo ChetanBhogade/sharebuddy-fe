@@ -92,7 +92,7 @@ function LoginPage() {
     if (validateForm(formData)) {
       setIsBackdropLoading(true);
       const newFormData = new FormData();
-      newFormData.append("username", formData.email);
+      newFormData.append("email", formData.email);
       newFormData.append("password", formData.password);
 
       mutation.mutate(newFormData);
