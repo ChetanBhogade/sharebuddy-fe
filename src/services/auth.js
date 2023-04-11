@@ -47,3 +47,7 @@ export const addUserAddress = (formData) => {
 export const updateUserAddress = (formData) => {
   return makeAuthPostCall("update_address", formData);
 };
+
+export const getAllProducts =(formData)=>{
+  return makeAuthGetCall("get_all_products", formData)
+}

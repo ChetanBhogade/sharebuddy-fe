@@ -14,6 +14,7 @@ import {
   ExitToApp,
   Inbox,
   PersonAdd,
+  Category,
   Send,
   ShoppingCart,
 } from "@mui/icons-material";
@@ -48,11 +49,11 @@ function DrawerContent() {
           </ListItemIcon>
           <ListItemText primary="Find Friend" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => router.push("/products")}>
           <ListItemIcon>
-            <Drafts style={{ color: "#fff" }} />
+            <Category style={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Drafts" />
+          <ListItemText primary="Products" />
         </ListItemButton>
         <ListItemButton>
           <ListItemIcon>
