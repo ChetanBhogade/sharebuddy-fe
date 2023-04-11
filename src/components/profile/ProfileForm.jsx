@@ -6,18 +6,24 @@ import { PhotoCamera } from "@mui/icons-material";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import DialogBox from "../common/DialogBox";
 import AddressForm from "./AddressForm";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addUserAddress,
+  getLoggedInUserDetails,
   getUserAddress,
   updateUserAddress,
   updateUserDetails,
 } from "@/services/auth";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 function ProfileForm() {
-  const { user, setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
+  const { user, setIsBackdropLoading, setSnackbar, setUser } =
+    useContext(GlobalContext);
+
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -40,6 +46,11 @@ function ProfileForm() {
     pincode: "",
   });
   const [hasAddress, setHasAddress] = useState(false);
+
+  const { data: userData } = useQuery({
+    queryKey: ["getLoggedInUserDetails"],
+    queryFn: getLoggedInUserDetails,
+  });
 
   const { data: userAddress } = useQuery({
     queryKey: ["getUserAddress"],
@@ -68,6 +79,7 @@ function ProfileForm() {
         severity: "success",
       });
       setIsBackdropLoading(false);
+      queryClient.invalidateQueries({ queryKey: ["getLoggedInUserDetails"] });
     },
     onError: (error) => {
       console.log(
@@ -199,6 +211,26 @@ function ProfileForm() {
 
     setOpenAddressDialog(false);
   };
+
+  const handleRedirect = (userData) => {
+    if (!userData) return;
+
+    if (userData && userData.response) {
+      console.log("setting user data is: ", userData?.response);
+      setUser(userData?.response);
+    }
+    if (
+      userData &&
+      (!userData?.response?.is_mobile_number_verified ||
+        !userData?.response?.is_email_verified)
+    ) {
+      router.push("/verify");
+    }
+  };
+
+  useEffect(() => {
+    handleRedirect(userData);
+  }, [userData]);
 
   useEffect(() => {
     if (userAddress && userAddress.response) {
@@ -349,7 +381,6 @@ function ProfileForm() {
               onClick={() => setOpenAddressDialog(true)}
               variant="outlined"
               fullWidth
-              type="submit"
               color="primary"
             >
               Update Address
