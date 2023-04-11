@@ -40,7 +40,7 @@ export const makePostCallWithFormData = async (url, formData) => {
 
 export const makeAuthPostCall = async (url, formData) => {
   try {
-    const token = localStorage.getItem("sharebuddyToken");
+    const token = localStorage.getItem("sharebuddyToken") || "123";
     const response = await axios.post(`${backendAPI}${url}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -57,7 +57,7 @@ export const makeAuthPostCall = async (url, formData) => {
 
 export const makeAuthGetCall = async (url) => {
   try {
-    const token = localStorage.getItem("sharebuddyToken");
+    const token = localStorage.getItem("sharebuddyToken") || "123";
     const response = await axios.get(`${backendAPI}${url}`, {
       headers: {
         Authorization: `Bearer ${token}`,
