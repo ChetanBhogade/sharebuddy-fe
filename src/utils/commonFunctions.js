@@ -1,4 +1,8 @@
 export const getErrorMessage = (errorObj) => {
+  if (errorObj?.response?.status === 401) {
+    localStorage.clear("sharebuddyToken");
+    return errorObj?.response?.statusText || "Unauthorized";
+  }
   if (errorObj?.response?.data?.message?.length > 1) {
     return errorObj?.response?.data?.message;
   }

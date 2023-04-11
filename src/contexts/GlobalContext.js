@@ -1,5 +1,6 @@
 import SnackbarMessage from "@/components/common/SnackbarMessage/SnackbarMessage";
 import { Backdrop, CircularProgress } from "@mui/material";
+import { useRouter } from "next/router";
 import { createContext, useEffect, useMemo, useState } from "react";
 
 export const GlobalContext = createContext();
@@ -12,6 +13,8 @@ function GlobalContextProvider({ children }) {
   });
   const [isBackdropLoading, setIsBackdropLoading] = useState(false);
   const [user, setUser] = useState(null);
+
+  const router = useRouter();
 
   const value = useMemo(
     () => ({
@@ -32,6 +35,10 @@ function GlobalContextProvider({ children }) {
 
   useEffect(() => {
     const localUserState = JSON.parse(localStorage.getItem("sharebuddyUser"));
+    const token = localStorage.getItem("sharebuddyToken");
+    if (!token) {
+      router.push("/login");
+    }
     setUser(localUserState);
   }, []);
 
