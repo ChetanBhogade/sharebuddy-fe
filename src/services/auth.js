@@ -35,3 +35,7 @@ export const sendSmsOtp = (formData) => {
 export const getAllUsers = () => {
   return makeAuthGetCall("get_all_users");
 };
+
+export const getAllProducts =()=>{
+  return makeAuthGetCall("get_all_products")
+}
