@@ -4,8 +4,19 @@ import React, { useContext, useEffect, useState } from "react";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { PhotoCamera } from "@mui/icons-material";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import DialogBox from "../common/DialogBox";
+import AddressForm from "./AddressForm";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  addUserAddress,
+  getUserAddress,
+  updateUserAddress,
+} from "@/services/auth";
+import { getErrorMessage } from "@/utils/commonFunctions";
 
 function ProfileForm() {
+  const { user, setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
+
   const [formData, setFormData] = useState({
     email: "",
     firstName: "",
@@ -13,8 +24,77 @@ function ProfileForm() {
     mobile: "",
     dob: "",
   });
+  const [openAddressDialog, setOpenAddressDialog] = useState(false);
+  const [addressFormData, setAddressFormData] = useState({
+    user_id: "-",
+    id: 1,
+    line1: "",
+    line2: "",
+    city: "",
+    state: "",
+    country: "",
+    landmark: "",
+    pincode: "",
+  });
+  const [hasAddress, setHasAddress] = useState(false);
 
-  const { user } = useContext(GlobalContext);
+  const { data: userAddress } = useQuery({
+    queryKey: ["getUserAddress"],
+    queryFn: getUserAddress,
+    onSuccess: () => {
+      setHasAddress(true);
+    },
+    onError: (error) => {
+      console.log("getAllUsers on error: ", error);
+      if (error?.response?.data?.code === 400) {
+        setHasAddress(false);
+      }
+    },
+  });
+
+  const addAddressMutation = useMutation({
+    mutationFn: (data) => addUserAddress(data),
+    onSuccess: (data) => {
+      console.log("addAddressMutation addUserAddress on success: ", data);
+      setSnackbar({
+        isOpen: true,
+        message: data?.response || "Form Submitted Successfully.",
+        severity: "success",
+      });
+      setIsBackdropLoading(false);
+    },
+    onError: (error) => {
+      console.log("addAddressMutation addUserAddress on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
+
+  const updateAddressMutation = useMutation({
+    mutationFn: (data) => updateUserAddress(data),
+    onSuccess: (data) => {
+      console.log("updateAddressMutation updateUserAddress on success: ", data);
+      setSnackbar({
+        isOpen: true,
+        message: data?.response || "Form Submitted Successfully.",
+        severity: "success",
+      });
+      setIsBackdropLoading(false);
+    },
+    onError: (error) => {
+      console.log("updateAddressMutation updateUserAddress on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
 
   const formSubmit = (event) => {
     event.preventDefault();
@@ -27,6 +107,65 @@ function ProfileForm() {
 
     console.log("Form submitted for update....", event, formData, newFormData);
   };
+
+  const handleAddressFormSubmit = () => {
+    console.log(
+      "Handle address form submit with data: ",
+      addressFormData,
+      hasAddress
+    );
+    const defaultData = {
+      user_id: "-",
+      id: 1,
+      line1: "",
+      line2: "",
+      city: "",
+      state: "",
+      country: "",
+      landmark: "",
+      pincode: "",
+    };
+    if (hasAddress) {
+      if (
+        JSON.stringify(userAddress?.response) !==
+        JSON.stringify(addressFormData)
+      ) {
+        const newFormData = new FormData();
+        for (const key of Object.keys(addressFormData)) {
+          newFormData.append(key, addressFormData[key]);
+        }
+        updateAddressMutation.mutate(newFormData);
+      } else {
+        setSnackbar({
+          isOpen: true,
+          message: "No Changes Detected.",
+          severity: "info",
+        });
+      }
+    } else {
+      if (JSON.stringify(addressFormData) !== JSON.stringify(defaultData)) {
+        const newFormData = new FormData();
+        for (const key of Object.keys(addressFormData)) {
+          newFormData.append(key, addressFormData[key]);
+        }
+        addAddressMutation.mutate(newFormData);
+      } else {
+        setSnackbar({
+          isOpen: true,
+          message: "No Changes Detected.",
+          severity: "info",
+        });
+      }
+    }
+
+    setOpenAddressDialog(false);
+  };
+
+  useEffect(() => {
+    if (userAddress && userAddress.response) {
+      setAddressFormData({ ...userAddress.response });
+    }
+  }, [userAddress]);
 
   useEffect(() => {
     console.log("User details: ", user);
@@ -150,8 +289,30 @@ function ProfileForm() {
               Update
             </Button>
           </Grid>
+          <Grid item xs={12}>
+            <Button
+              onClick={() => setOpenAddressDialog(true)}
+              variant="outlined"
+              fullWidth
+              type="submit"
+              color="primary"
+            >
+              Update Address
+            </Button>
+          </Grid>
         </Grid>
       </form>
+      <DialogBox
+        title={"Your Address"}
+        open={openAddressDialog}
+        handleClose={() => setOpenAddressDialog(false)}
+        handleSubmit={handleAddressFormSubmit}
+      >
+        <AddressForm
+          setAddressFormData={setAddressFormData}
+          addressFormData={addressFormData}
+        />
+      </DialogBox>
     </div>
   );
 }
