@@ -15,7 +15,7 @@ export default function Home() {
     queryKey: ["getLoggedInUserDetails"],
     queryFn: getLoggedInUserDetails,
     onError: (error) => {
-      console.log("mutation registerUser on error: ", error);
+      console.log("getLoggedInUserDetails on error: ", error);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),

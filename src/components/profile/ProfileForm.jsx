@@ -11,8 +11,10 @@ import {
   addUserAddress,
   getUserAddress,
   updateUserAddress,
+  updateUserDetails,
 } from "@/services/auth";
 import { getErrorMessage } from "@/utils/commonFunctions";
+import moment from "moment";
 
 function ProfileForm() {
   const { user, setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
@@ -23,6 +25,7 @@ function ProfileForm() {
     lastName: "",
     mobile: "",
     dob: "",
+    image: "",
   });
   const [openAddressDialog, setOpenAddressDialog] = useState(false);
   const [addressFormData, setAddressFormData] = useState({
@@ -49,6 +52,34 @@ function ProfileForm() {
       if (error?.response?.data?.code === 400) {
         setHasAddress(false);
       }
+    },
+  });
+
+  const updateUserDetailsMutation = useMutation({
+    mutationFn: (data) => updateUserDetails(data),
+    onSuccess: (data) => {
+      console.log(
+        "updateUserDetailsMutation updateUserDetails on success: ",
+        data
+      );
+      setSnackbar({
+        isOpen: true,
+        message: data?.response || "Form Submitted Successfully.",
+        severity: "success",
+      });
+      setIsBackdropLoading(false);
+    },
+    onError: (error) => {
+      console.log(
+        "updateUserDetailsMutation updateUserDetails on error: ",
+        error
+      );
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
     },
   });
 
@@ -102,10 +133,18 @@ function ProfileForm() {
     const newFormData = new FormData();
     newFormData.append("first_name", formData.firstName);
     newFormData.append("last_name", formData.lastName);
-    newFormData.append("email", formData.email);
-    newFormData.append("mobile_number", formData.mobile);
+    if (user?.email !== formData.email) {
+      newFormData.append("email", formData.email);
+    }
+    if (user?.mobile_number !== formData.mobile) {
+      newFormData.append("mobile_number", formData.mobile);
+    }
 
-    console.log("Form submitted for update....", event, formData, newFormData);
+    newFormData.append("dob", moment(formData.dob).format("DD/MM/YYYY"));
+    newFormData.append("photo", formData.image);
+
+    console.log("Form submitted for update....", formData);
+    updateUserDetailsMutation.mutate(newFormData);
   };
 
   const handleAddressFormSubmit = () => {
@@ -255,7 +294,7 @@ function ProfileForm() {
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label="Date Of Birth"
-                value={formData.dob}
+                value={moment(formData.dob)}
                 format="DD/MM/YYYY"
                 onChange={(newValue) =>
                   setFormData({
@@ -279,10 +318,26 @@ function ProfileForm() {
               aria-label="upload picture"
               component="label"
             >
-              <input hidden accept="image/*" type="file" />
+              <input
+                id="contained-button-file"
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={(event) => {
+                  console.log("onchange event: ", event.target.files[0]);
+                  setFormData({
+                    ...formData,
+                    image: event.target.files[0],
+                  });
+                }}
+              />
               <PhotoCamera />
             </IconButton>
-            <span>Update Image</span>
+            <label htmlFor="contained-button-file">
+              <Button variant="text" color="primary" component="span">
+                Update Image
+              </Button>
+            </label>
           </Grid>
           <Grid item xs={12}>
             <Button variant="contained" fullWidth type="submit" color="primary">
