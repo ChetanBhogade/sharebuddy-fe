@@ -4,6 +4,7 @@ import styles from "./Profile.module.scss";
 import Image from "next/image";
 import { ImageUrls } from "@/constants/images";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function a11yProps(index) {
   return {
@@ -15,13 +16,22 @@ function a11yProps(index) {
 function ProfileHeader({ handleChange, value }) {
   const { user } = useContext(GlobalContext);
 
+  console.log(
+    "profile photo url: ",
+    `${backendMediaAPI}${user?.profile_photo}`
+  );
+
   return (
     <div>
       <Paper elevation={2} className={styles.profileHeaderPaper}>
         <div className={styles.imgWrapper}>
           <Image
-            src={user?.profile_photo || ImageUrls.defaultAvatar}
-            alt="Avatar"
+            src={
+              user?.profile_photo
+                ? `${backendMediaAPI}${user?.profile_photo}`
+                : ImageUrls.defaultAvatar
+            }
+            alt="Profile Avatar Img"
             width={100}
             height={100}
             priority

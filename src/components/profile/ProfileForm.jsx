@@ -6,16 +6,24 @@ import { PhotoCamera } from "@mui/icons-material";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import DialogBox from "../common/DialogBox";
 import AddressForm from "./AddressForm";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addUserAddress,
+  getLoggedInUserDetails,
   getUserAddress,
   updateUserAddress,
+  updateUserDetails,
 } from "@/services/auth";
 import { getErrorMessage } from "@/utils/commonFunctions";
+import moment from "moment";
+import { useRouter } from "next/router";
 
 function ProfileForm() {
-  const { user, setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
+  const { user, setIsBackdropLoading, setSnackbar, setUser } =
+    useContext(GlobalContext);
+
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -23,6 +31,7 @@ function ProfileForm() {
     lastName: "",
     mobile: "",
     dob: "",
+    image: "",
   });
   const [openAddressDialog, setOpenAddressDialog] = useState(false);
   const [addressFormData, setAddressFormData] = useState({
@@ -38,6 +47,11 @@ function ProfileForm() {
   });
   const [hasAddress, setHasAddress] = useState(false);
 
+  const { data: userData } = useQuery({
+    queryKey: ["getLoggedInUserDetails"],
+    queryFn: getLoggedInUserDetails,
+  });
+
   const { data: userAddress } = useQuery({
     queryKey: ["getUserAddress"],
     queryFn: getUserAddress,
@@ -49,6 +63,35 @@ function ProfileForm() {
       if (error?.response?.data?.code === 400) {
         setHasAddress(false);
       }
+    },
+  });
+
+  const updateUserDetailsMutation = useMutation({
+    mutationFn: (data) => updateUserDetails(data),
+    onSuccess: (data) => {
+      console.log(
+        "updateUserDetailsMutation updateUserDetails on success: ",
+        data
+      );
+      setSnackbar({
+        isOpen: true,
+        message: data?.response || "Form Submitted Successfully.",
+        severity: "success",
+      });
+      setIsBackdropLoading(false);
+      queryClient.invalidateQueries({ queryKey: ["getLoggedInUserDetails"] });
+    },
+    onError: (error) => {
+      console.log(
+        "updateUserDetailsMutation updateUserDetails on error: ",
+        error
+      );
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
     },
   });
 
@@ -102,10 +145,18 @@ function ProfileForm() {
     const newFormData = new FormData();
     newFormData.append("first_name", formData.firstName);
     newFormData.append("last_name", formData.lastName);
-    newFormData.append("email", formData.email);
-    newFormData.append("mobile_number", formData.mobile);
+    if (user?.email !== formData.email) {
+      newFormData.append("email", formData.email);
+    }
+    if (user?.mobile_number !== formData.mobile) {
+      newFormData.append("mobile_number", formData.mobile);
+    }
 
-    console.log("Form submitted for update....", event, formData, newFormData);
+    newFormData.append("dob", moment(formData.dob).format("DD/MM/YYYY"));
+    newFormData.append("photo", formData.image);
+
+    console.log("Form submitted for update....", formData);
+    updateUserDetailsMutation.mutate(newFormData);
   };
 
   const handleAddressFormSubmit = () => {
@@ -160,6 +211,26 @@ function ProfileForm() {
 
     setOpenAddressDialog(false);
   };
+
+  const handleRedirect = (userData) => {
+    if (!userData) return;
+
+    if (userData && userData.response) {
+      console.log("setting user data is: ", userData?.response);
+      setUser(userData?.response);
+    }
+    if (
+      userData &&
+      (!userData?.response?.is_mobile_number_verified ||
+        !userData?.response?.is_email_verified)
+    ) {
+      router.push("/verify");
+    }
+  };
+
+  useEffect(() => {
+    handleRedirect(userData);
+  }, [userData]);
 
   useEffect(() => {
     if (userAddress && userAddress.response) {
@@ -255,7 +326,7 @@ function ProfileForm() {
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label="Date Of Birth"
-                value={formData.dob}
+                value={moment(formData.dob)}
                 format="DD/MM/YYYY"
                 onChange={(newValue) =>
                   setFormData({
@@ -279,10 +350,26 @@ function ProfileForm() {
               aria-label="upload picture"
               component="label"
             >
-              <input hidden accept="image/*" type="file" />
+              <input
+                id="contained-button-file"
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={(event) => {
+                  console.log("onchange event: ", event.target.files[0]);
+                  setFormData({
+                    ...formData,
+                    image: event.target.files[0],
+                  });
+                }}
+              />
               <PhotoCamera />
             </IconButton>
-            <span>Update Image</span>
+            <label htmlFor="contained-button-file">
+              <Button variant="text" color="primary" component="span">
+                Update Image
+              </Button>
+            </label>
           </Grid>
           <Grid item xs={12}>
             <Button variant="contained" fullWidth type="submit" color="primary">
@@ -294,7 +381,6 @@ function ProfileForm() {
               onClick={() => setOpenAddressDialog(true)}
               variant="outlined"
               fullWidth
-              type="submit"
               color="primary"
             >
               Update Address
