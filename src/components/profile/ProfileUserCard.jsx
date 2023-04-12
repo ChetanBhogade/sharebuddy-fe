@@ -1,15 +1,15 @@
 import { ImageUrls } from "@/constants/images";
-import { Button, Paper } from "@mui/material";
+import { IconButton, Paper } from "@mui/material";
 import Image from "next/image";
 import React from "react";
 import styles from "./Profile.module.scss";
-import { Check } from "@mui/icons-material";
+import { Delete, PersonAddAlt1 } from "@mui/icons-material";
 
 function ProfileUserCard({
-  isFollowing = true,
-  showActionBtn = true,
+  showDeleteBtn = true,
   elevation = 4,
   username = "Dummy User",
+  handleClick,
 }) {
   return (
     <div>
@@ -25,18 +25,15 @@ function ProfileUserCard({
           </div>
           <span className={styles.username}>{username}</span>
         </div>
-        {showActionBtn && (
-          <div>
-            {isFollowing ? (
-              <div className={styles.followedSection}>
-                <Check />
-                <span style={{ marginLeft: 5 }}>Followed</span>
-              </div>
-            ) : (
-              <Button variant="outlined">Follow</Button>
-            )}
-          </div>
-        )}
+
+        <div>
+          <IconButton
+            onClick={handleClick}
+            color={showDeleteBtn ? "error" : "primary"}
+          >
+            {showDeleteBtn ? <Delete /> : <PersonAddAlt1 />}
+          </IconButton>
+        </div>
       </Paper>
     </div>
   );
