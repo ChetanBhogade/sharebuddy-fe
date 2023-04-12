@@ -129,7 +129,7 @@ function VerifyPage() {
       setIsEmailVerified(user.is_email_verified);
       setIsMobileVerified(user.is_mobile_number_verified);
     }
-  }, []);
+  }, [user]);
 
   return (
     <AuthWrapper>

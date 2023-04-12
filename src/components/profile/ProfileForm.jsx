@@ -31,7 +31,7 @@ function ProfileForm() {
     lastName: "",
     mobile: "",
     dob: "",
-    image: "",
+    image: "-",
   });
   const [openAddressDialog, setOpenAddressDialog] = useState(false);
   const [addressFormData, setAddressFormData] = useState({
@@ -153,7 +153,9 @@ function ProfileForm() {
     }
 
     newFormData.append("dob", moment(formData.dob).format("DD/MM/YYYY"));
-    newFormData.append("photo", formData.image);
+    if (formData.image !== "-") {
+      newFormData.append("photo", formData.image);
+    }
 
     console.log("Form submitted for update....", formData);
     updateUserDetailsMutation.mutate(newFormData);
@@ -246,6 +248,7 @@ function ProfileForm() {
       lastName: user?.last_name || "",
       mobile: user?.mobile_number || "",
       dob: user?.dob || "",
+      image: "-",
     });
   }, [user]);
 

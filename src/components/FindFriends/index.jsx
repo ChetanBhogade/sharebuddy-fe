@@ -59,7 +59,7 @@ function FindFriendsPage() {
         <Grid
           container
           alignItems="center"
-          justifyContent="space-around"
+          justifyContent="space-evenly"
           gap={2}
         >
           {allUserDataResponse &&

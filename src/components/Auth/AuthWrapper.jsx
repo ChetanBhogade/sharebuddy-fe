@@ -16,7 +16,7 @@ function AuthWrapper({ children }) {
     user?.is_mobile_number_verified &&
     user?.is_email_verified
   ) {
-    return router.push("/");
+    router.push("/");
   }
 
   return (

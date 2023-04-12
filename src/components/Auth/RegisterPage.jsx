@@ -34,7 +34,7 @@ function RegisterPage() {
       console.log("mutation registerUser on success: ", data);
       setIsBackdropLoading(false);
       if (data.code === 200) {
-        router.push("/login");
+        router.push("/verify");
       } else {
         setSnackbar({
           isOpen: true,

@@ -16,6 +16,7 @@ export default function Home() {
     queryFn: getLoggedInUserDetails,
     onError: (error) => {
       console.log("getLoggedInUserDetails on error: ", error);
+      setIsBackdropLoading(false);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),
@@ -25,7 +26,6 @@ export default function Home() {
         setUser(null);
         router.push("/login");
       }
-      setIsBackdropLoading(false);
     },
   });
 
