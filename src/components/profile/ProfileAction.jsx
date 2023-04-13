@@ -1,14 +1,17 @@
 import { Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import UserCard from "../common/UserCard";
+import React, { useContext, useEffect, useState } from "react";
+import UserCard from "./UserCard";
 import { useQuery } from "@tanstack/react-query";
 import { getFriendRequests } from "@/services/friends";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { backendMediaAPI } from "@/constants/BaseUrls";
 import { ImageUrls } from "@/constants/images";
+import { GlobalContext } from "@/contexts/GlobalContext";
 
 function ProfileAction() {
   const [requestsList, setRequestsList] = useState([]);
+
+  const { setSnackbar } = useContext(GlobalContext);
 
   const { data: allFriendRequests } = useQuery({
     queryKey: ["getFriendRequests"],
@@ -33,7 +36,7 @@ function ProfileAction() {
 
   return (
     <div>
-      {requestsList.length > 1 ? (
+      {requestsList.length > 0 ? (
         <Grid container justifyContent="space-around" rowGap={2} columnGap={1}>
           {requestsList.map((user) => {
             return (
@@ -46,6 +49,7 @@ function ProfileAction() {
                       ? `${backendMediaAPI}${user.profile_photo}`
                       : ImageUrls.defaultAvatar
                   }
+                  status={user.status}
                 />
               </Grid>
             );
