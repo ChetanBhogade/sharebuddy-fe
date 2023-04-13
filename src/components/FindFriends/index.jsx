@@ -92,7 +92,7 @@ function FindFriendsPage() {
           container
           alignItems="center"
           justifyContent="space-evenly"
-          gap={2}
+          rowGap={2}
         >
           {allUserDataResponse &&
             filterUsers(
@@ -100,7 +100,7 @@ function FindFriendsPage() {
             ).map((userObj) => {
               return (
                 !userObj.is_superuser && (
-                  <Grid key={userObj.user_id} item xs={12} md={4.5} lg={3.5}>
+                  <Grid key={userObj.user_id} item xs={12} md={4.8} lg={3.5}>
                     <ProfileUserCard
                       username={`${userObj.first_name} ${userObj.last_name}`}
                       handleClick={() => {
