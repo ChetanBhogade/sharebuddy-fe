@@ -32,12 +32,13 @@ function ProfileFriends() {
         <h4>No Pending Friend Requests</h4>
       ) : (
         <Grid container justifyContent="space-around" rowGap={2}>
-          {allFriendsData.response?.map((friend) => {
+          {allFriendsData?.response?.map((friend) => {
             return (
               <Grid key={friend.user_id} item xs={12} md={5} lg={3.5}>
                 <ProfileUserCard
                   showDeleteBtn
                   username={friend.username}
+                  profileImg={friend.profile_photo}
                   handleClick={() => {
                     handleRemoveFriend(friend.user_id);
                   }}

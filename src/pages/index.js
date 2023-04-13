@@ -32,7 +32,6 @@ export default function Home() {
   console.log("query response: ", { isLoading, userData });
 
   const handleRedirect = (userData) => {
-    setIsBackdropLoading(isLoading);
     if (!userData) return;
 
     if (userData && userData.response) {

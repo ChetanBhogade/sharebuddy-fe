@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import PageLayout from "../common/PageLayout";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import {
@@ -14,12 +14,32 @@ import {
 } from "@mui/material";
 import styles from "./Shop.module.scss";
 import ProductCard from "../common/ProductCard";
+import { useQuery } from "@tanstack/react-query";
+import { getAllProducts } from "@/services/products";
+import { getErrorMessage } from "@/utils/commonFunctions";
+import { GlobalContext } from "@/contexts/GlobalContext";
 
 function ShopPage() {
   const [sortBy, setSortBy] = useState("latest");
 
   const theme = useTheme();
   const matchesMdDown = useMediaQuery(theme.breakpoints.down("md"));
+  const { setSnackbar } = useContext(GlobalContext);
+
+  const { data: allProducts } = useQuery({
+    queryKey: ["getAllProducts"],
+    queryFn: getAllProducts,
+    onError: (error) => {
+      console.log("getAllProducts on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+    },
+  });
+
+  console.log("allProducts: ", allProducts);
 
   const handleSortByChange = (event) => {
     setSortBy(event.target.value);
@@ -71,8 +91,26 @@ function ShopPage() {
             </FormControl>
           </Grid>
         </Grid>
+
         <Divider style={{ marginTop: 20, marginBottom: 20 }} />
+
         <Grid container gap={2} justifyContent="space-around">
+          {allProducts && typeof allProducts.response === "string"
+            ? allProducts.response.map((product) => {
+                return (
+                  <Grid
+                    key={product.product_id}
+                    item
+                    xs={12}
+                    md={5.5}
+                    lg={3.5}
+                    xl={2.5}
+                  >
+                    <ProductCard />
+                  </Grid>
+                );
+              })
+            : null}
           <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
             <ProductCard />
           </Grid>

@@ -3,10 +3,10 @@ import { DataGrid, GridMoreVertIcon } from "@mui/x-data-grid";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import PageLayout from "../common/PageLayout";
 import { useQuery } from "@tanstack/react-query";
-import { getAllProducts } from "@/services/auth";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { Box, IconButton, Paper, Rating, Stack } from "@mui/material";
+import { getAllProducts } from "@/services/products";
 
 export default function ProductsPage() {
   const { setSnackbar } = useContext(GlobalContext);
@@ -39,18 +39,18 @@ export default function ProductsPage() {
     },
     { field: "category", headerName: "Category", width: 120 },
 
-    { 
-      field: "ratings", 
-      headerName: "Ratings", 
-      width: 130, 
-      type: "number", 
-      renderCell: (params)=>{
-        return(
+    {
+      field: "ratings",
+      headerName: "Ratings",
+      width: 130,
+      type: "number",
+      renderCell: (params) => {
+        return (
           <div>
-          <Rating name="read-only" value={params.row.ratings} readOnly />
+            <Rating name="read-only" value={params.row.ratings} readOnly />
           </div>
-        )
-      }
+        );
+      },
     },
     {
       field: "is_available",
@@ -133,15 +133,25 @@ export default function ProductsPage() {
               isRowSelectable={false}
               components={{
                 NoRowsOverlay: () => (
-                  <Stack height="100%" alignItems="center" justifyContent="center">
-                    <span style={{fontSize: 20, fontWeight: 700}}>No Data</span>
+                  <Stack
+                    height="100%"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <span style={{ fontSize: 20, fontWeight: 700 }}>
+                      No Data
+                    </span>
                   </Stack>
                 ),
                 NoResultsOverlay: () => (
-                  <Stack height="100%" alignItems="center" justifyContent="center">
+                  <Stack
+                    height="100%"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
                     Local filter returns no result
                   </Stack>
-                )
+                ),
               }}
             />
           </div>
