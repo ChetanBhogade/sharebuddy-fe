@@ -12,7 +12,7 @@ function GlobalContextProvider({ children }) {
     severity: "success",
   });
   const [isBackdropLoading, setIsBackdropLoading] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined);
 
   const router = useRouter();
 
@@ -28,7 +28,7 @@ function GlobalContextProvider({ children }) {
   );
 
   useEffect(() => {
-    if (user !== null) {
+    if (user !== undefined) {
       localStorage.setItem("sharebuddyUser", JSON.stringify(user));
     }
   }, [user]);

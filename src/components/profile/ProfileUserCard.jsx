@@ -6,7 +6,7 @@ import styles from "./Profile.module.scss";
 import { Delete, PersonAddAlt1 } from "@mui/icons-material";
 
 function ProfileUserCard({
-  showDeleteBtn = true,
+  showDeleteBtn = false,
   elevation = 4,
   username = "Dummy User",
   handleClick,

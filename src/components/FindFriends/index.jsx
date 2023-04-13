@@ -3,15 +3,16 @@ import PageLayout from "../common/PageLayout";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import { Divider, Grid, TextField } from "@mui/material";
 import ProfileUserCard from "../profile/ProfileUserCard";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getAllUsers } from "@/services/auth";
 import { getErrorMessage, sortListOfObjects } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import { sendFriendRequest } from "@/services/friends";
 
 function FindFriendsPage() {
   const [searchText, setSearchText] = useState("");
 
-  const { setSnackbar } = useContext(GlobalContext);
+  const { setSnackbar, setIsBackdropLoading } = useContext(GlobalContext);
 
   const { data: allUserDataResponse } = useQuery({
     queryKey: ["getAllUsers"],
@@ -25,6 +26,37 @@ function FindFriendsPage() {
       });
     },
   });
+
+  const sendFriendRequestMutation = useMutation({
+    mutationFn: (data) => sendFriendRequest(data),
+    onSuccess: (data) => {
+      console.log(
+        "sendFriendRequestMutation sendFriendRequest on success: ",
+        data
+      );
+      setIsBackdropLoading(false);
+    },
+    onError: (error) => {
+      console.log(
+        "sendFriendRequestMutation sendFriendRequest on error: ",
+        error
+      );
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
+
+  const handleAddFriendClick = (selectedUserId) => {
+    console.log("selected user id is: ", selectedUserId);
+    setIsBackdropLoading(true);
+    const newFormData = new FormData();
+    newFormData.append("receiver_id", selectedUserId);
+    sendFriendRequestMutation.mutate(newFormData);
+  };
 
   const filterUsers = (usersList) => {
     return usersList.filter((user) => {
@@ -71,6 +103,9 @@ function FindFriendsPage() {
                   <Grid key={userObj.user_id} item xs={12} md={4.5} lg={3.5}>
                     <ProfileUserCard
                       username={`${userObj.first_name} ${userObj.last_name}`}
+                      handleClick={() => {
+                        handleAddFriendClick(userObj?.user_id);
+                      }}
                     />
                   </Grid>
                 )

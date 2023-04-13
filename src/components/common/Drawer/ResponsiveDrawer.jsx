@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./ResponsiveDrawer.module.scss";
 import {
   AppBar,
@@ -24,20 +24,22 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
   const theme = useTheme();
   const router = useRouter();
 
-  if (
-    user === null &&
-    !user?.is_mobile_number_verified &&
-    !user?.is_email_verified
-  ) {
-    return router.push("/");
-  }
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
+
+  useEffect(() => {
+    if (
+      user === null &&
+      !user?.is_mobile_number_verified &&
+      !user?.is_email_verified
+    ) {
+      router.push("/");
+    }
+  }, [user]);
 
   return (
     <div className={styles.root}>
