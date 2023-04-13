@@ -4,12 +4,14 @@ import Image from "next/image";
 import React from "react";
 import styles from "./Profile.module.scss";
 import { Delete, PersonAddAlt1 } from "@mui/icons-material";
+import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function ProfileUserCard({
   showDeleteBtn = false,
   elevation = 4,
   username = "Dummy User",
   handleClick,
+  profileImg,
 }) {
   return (
     <div>
@@ -17,7 +19,11 @@ function ProfileUserCard({
         <div className={styles.nameWrapper}>
           <div className={styles.imgWrapper}>
             <Image
-              src={ImageUrls.defaultAvatar}
+              src={
+                profileImg
+                  ? `${backendMediaAPI}${profileImg}`
+                  : ImageUrls.defaultAvatar
+              }
               alt="Avatar"
               width={50}
               height={50}

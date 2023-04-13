@@ -103,6 +103,7 @@ function FindFriendsPage() {
                   <Grid key={userObj.user_id} item xs={12} md={4.8} lg={3.5}>
                     <ProfileUserCard
                       username={`${userObj.first_name} ${userObj.last_name}`}
+                      profileImg={userObj.profile_photo}
                       handleClick={() => {
                         handleAddFriendClick(userObj?.user_id);
                       }}
