@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./ResponsiveDrawer.module.scss";
 import {
   AppBar,
@@ -14,11 +14,15 @@ import {
 import { Menu } from "@mui/icons-material";
 import Footer from "../Footer";
 import DrawerContent from "./DrawerContent";
+import { useRouter } from "next/router";
+import { GlobalContext } from "@/contexts/GlobalContext";
 
 function ResponsiveDrawer({ children, documentHeading, window }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const { user } = useContext(GlobalContext);
   const theme = useTheme();
+  const router = useRouter();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -26,6 +30,16 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
+
+  useEffect(() => {
+    if (
+      user === null &&
+      !user?.is_mobile_number_verified &&
+      !user?.is_email_verified
+    ) {
+      router.push("/");
+    }
+  }, [user]);
 
   return (
     <div className={styles.root}>
