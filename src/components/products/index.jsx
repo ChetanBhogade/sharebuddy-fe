@@ -1,15 +1,27 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DataGrid, GridMoreVertIcon } from "@mui/x-data-grid";
+import { Edit, Delete } from "@mui/icons-material";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import PageLayout from "../common/PageLayout";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { getErrorMessage } from "@/utils/commonFunctions";
-import { Box, IconButton, Paper, Rating, Stack } from "@mui/material";
-import { getAllProducts } from "@/services/products";
+import { Avatar, Button, IconButton, Paper, Rating, Stack } from "@mui/material";
+import {
+  addProducts,
+  getAllProducts,
+  removeProduct,
+  updateProduct,
+} from "@/services/products";
+import style from "./product.module.scss";
+import ProductsForm from "./productsForm";
+import { backendMediaAPI } from "@/constants/BaseUrls";
+import DeleteDialog from "../common/DeleteDialog";
 
 export default function ProductsPage() {
-  const { setSnackbar } = useContext(GlobalContext);
+  const { setSnackbar, setIsBackdropLoading } = useContext(GlobalContext);
+
+  const queryClient = useQueryClient();
 
   const { data: allUserDataResponse } = useQuery({
     queryKey: ["getAllProducts"],
@@ -23,9 +35,110 @@ export default function ProductsPage() {
       });
     },
   });
+  const [openAddForm, setOpenAddForm] = useState(false);
+  const [openEditForm, setOpenEditForm] = useState(false);
+  const [deleteData, setDeleteData] = useState(null);
+  const [editData, setEditData] = useState(null);
 
   console.log("allUserDataResponse", allUserDataResponse);
+
+  const onEdit = (params) => {
+    console.log("params : ", params);
+    setEditData(params.row);
+    setOpenEditForm(true);
+  };
+
+  const onDelete = (params) => {
+    setDeleteData(params.row)
+  };
+
+  const productApiOnSucess = (data) => {
+    console.log(
+      "addProductDetailsMutation addProductDetails on success: ",
+      data
+    );
+    setSnackbar({
+      isOpen: true,
+      message: data?.response || "Form Submitted Successfully.",
+      severity: "success",
+    });
+    setIsBackdropLoading(false);
+    queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
+  };
+
+  const productApiOnError = (error) => {
+    console.log(
+      "updateUserDetailsMutation addProductDetails on error: ",
+      error
+    );
+    setSnackbar({
+      isOpen: true,
+      message: getErrorMessage(error),
+      severity: "error",
+    });
+    setIsBackdropLoading(false);
+  };
+
+  const addProductDetails = useMutation({
+    mutationFn: (data) => addProducts(data),
+    onSuccess: productApiOnSucess,
+    onError: productApiOnError,
+  });
+
+  const updateProductDetails = useMutation({
+    mutationFn: (data) => updateProduct(data),
+    onSuccess: productApiOnSucess,
+    onError: productApiOnError,
+  });
+
+  const DeleteProductDetails = useMutation({
+    mutationFn: (data) => removeProduct(data),
+    onSuccess: productApiOnSucess,
+    onError: productApiOnError,
+  });
+
+  const handleSubmitProduct = (e, formData, type) => {
+    setIsBackdropLoading(true)
+    e.preventDefault();
+    setOpenAddForm(false);
+    setOpenEditForm(false);
+    setEditData(null);
+    console.log("formData : ", formData);
+    const newFormData = new FormData();
+    newFormData.append("name", formData.prdName);
+    newFormData.append("description", formData.description);
+    newFormData.append("category", formData.category);
+    newFormData.append("price", formData.price);
+    newFormData.append("photo", formData.imageFile);
+
+    console.log(newFormData);
+    if (type === "Add") {
+      addProductDetails.mutate(newFormData);
+    } else if (type === "Edit") {
+      newFormData.append("product_id", formData.prdId);
+      updateProductDetails.mutate(newFormData);
+    }
+  };
+
+  const onDeleteProduct=()=>{
+    setIsBackdropLoading(true)
+    const newFormData = new FormData();
+    newFormData.append("product_id", deleteData.product_id);
+    setDeleteData(null)
+    DeleteProductDetails.mutate(newFormData)
+  }
+
   const columns = [
+    {
+      field: "photo",
+      headerName: "Image",
+      width: 90,
+      renderCell: (params) => {
+        return (
+          <Avatar src={`${backendMediaAPI}${params.row.photo}`} alt={params.row.name}/>
+        );
+      },
+    },
     { field: "name", headerName: "Name", width: 130 },
     {
       field: "description",
@@ -36,6 +149,12 @@ export default function ProductsPage() {
       field: "price",
       headerName: "Price",
       width: 90,
+      renderCell: (params) => {
+        return (
+          <Stack>{parseFloat(params.row.price)}</Stack>
+          // <Avatar src={`${backendMediaAPI}${params.row.photo}`} alt={params.row.name}/>
+        );
+      },
     },
     { field: "category", headerName: "Category", width: 120 },
 
@@ -57,12 +176,14 @@ export default function ProductsPage() {
       headerName: "Is Available",
       width: 90,
       type: "boolean",
+      sortable: false,
     },
     {
       field: "is_active",
       headerName: "Is Active",
       width: 90,
       type: "boolean",
+      sortable: false,
     },
     {
       field: "created_date",
@@ -77,60 +198,41 @@ export default function ProductsPage() {
     {
       headerName: "",
       sortable: false,
-      filterable: false,
       renderCell: (params) => {
         return (
-          <IconButton
-            aria-label="more"
-            id="long-button"
-            aria-controls={open ? "long-menu" : undefined}
-            aria-expanded={open ? "true" : undefined}
-            aria-haspopup="true"
-            // onClick={handleClick}
-          >
-            <GridMoreVertIcon />
-          </IconButton>
+          <>
+            <IconButton onClick={() => onEdit(params)}>
+              <Edit titleAccess="Edit" />
+            </IconButton>
+            <IconButton onClick={() => onDelete(params)}>
+              <Delete titleAccess="Delete" htmlColor={"rgb(255, 86, 48)"} />
+            </IconButton>
+          </>
         );
       },
     },
   ];
 
-  const rows = [
-    {
-      product_id: "YVD8OMJDXC9",
-      category: "ELECTRONIC",
-      name: "boat earphones",
-      description: "boat M160 model",
-      price: "1000.0000",
-      ratings: 2,
-      is_available: true,
-      is_active: true,
-      created_date: "2023-04-08T12:17:46.916840Z",
-      updated_date: "2023-04-08T12:17:46.919113Z",
-    },
-    {
-      product_id: "3ICCY0XZDUS",
-      category: "CLOTH",
-      name: "wine frock",
-      description: "wine frock with white work",
-      price: "700.0000",
-      ratings: 4,
-      is_available: true,
-      is_active: true,
-      created_date: "2023-04-08T12:19:23.438946Z",
-      updated_date: "2023-04-08T12:19:23.448899Z",
-    },
-  ];
   return (
     <PageLayout>
       <ResponsiveDrawer documentHeading={"Products"}>
+        <div className={style.buttonWrap}>
+          <Button
+            variant="contained"
+            className={style.addNewBtn}
+            onClick={() => setOpenAddForm(true)}
+          >
+            + Add New
+          </Button>
+        </div>
         <Paper>
-          <div style={{ height: "80vh", width: "100%", marginTop: 40 }}>
+          <div className={style.gridLayout}>
             <DataGrid
               getRowId={(row) => row.product_id}
-              rows={rows}
+              rows={allUserDataResponse?.response || []}
               columns={columns}
               isRowSelectable={false}
+              disableColumnMenu
               components={{
                 NoRowsOverlay: () => (
                   <Stack
@@ -138,24 +240,30 @@ export default function ProductsPage() {
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <span style={{ fontSize: 20, fontWeight: 700 }}>
-                      No Data
-                    </span>
-                  </Stack>
-                ),
-                NoResultsOverlay: () => (
-                  <Stack
-                    height="100%"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    Local filter returns no result
+                    <span className={style.noDataFont}>No Data</span>
                   </Stack>
                 ),
               }}
             />
           </div>
         </Paper>
+        <ProductsForm
+          open={openAddForm || openEditForm}
+          handleClose={() => {
+            setOpenAddForm(false);
+            setOpenEditForm(false);
+            setEditData(null);
+          }}
+          handleSubmit={handleSubmitProduct}
+          dialogType={openAddForm ? "Add" : openEditForm ? "Edit" : ""}
+          editData={editData}
+        />
+        <DeleteDialog
+          open={deleteData !== null}
+          handleClose={()=>setDeleteData(null)}
+          name={deleteData?.name || ""}
+          onSubmit={onDeleteProduct}
+        />
       </ResponsiveDrawer>
     </PageLayout>
   );
