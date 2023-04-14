@@ -4,3 +4,10 @@ export const FriendRequestStatus = {
   Reject: 3,
   Remove: 4,
 };
+
+export const ProductCategories = [
+  "CLOTH",
+  "ELECTRONIC",
+  "FOOTWEAR",
+  "ACCESSORIES",
+];

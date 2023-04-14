@@ -1,12 +1,24 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DataGrid, GridMoreVertIcon } from "@mui/x-data-grid";
+import { Edit, Delete } from "@mui/icons-material";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import PageLayout from "../common/PageLayout";
 import { useQuery } from "@tanstack/react-query";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { getErrorMessage } from "@/utils/commonFunctions";
-import { Box, IconButton, Paper, Rating, Stack } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Paper,
+  Rating,
+  Stack,
+} from "@mui/material";
 import { getAllProducts } from "@/services/products";
+import style from "./product.module.scss";
+import ProductsForm from "./productsForm";
 
 export default function ProductsPage() {
   const { setSnackbar } = useContext(GlobalContext);
@@ -23,8 +35,18 @@ export default function ProductsPage() {
       });
     },
   });
+  const [openAddForm, setOpenAddForm] = useState(false);
+  const [openEditForm, setOpenEditForm] = useState(false);
+  const [editData, setEditData] = useState(null);
 
   console.log("allUserDataResponse", allUserDataResponse);
+
+  const onEdit = (params) => {
+    console.log("params : ", params);
+    setEditData(params.row);
+    setOpenEditForm(true);
+  };
+
   const columns = [
     { field: "name", headerName: "Name", width: 130 },
     {
@@ -80,16 +102,14 @@ export default function ProductsPage() {
       filterable: false,
       renderCell: (params) => {
         return (
-          <IconButton
-            aria-label="more"
-            id="long-button"
-            aria-controls={open ? "long-menu" : undefined}
-            aria-expanded={open ? "true" : undefined}
-            aria-haspopup="true"
-            // onClick={handleClick}
-          >
-            <GridMoreVertIcon />
-          </IconButton>
+          <>
+            <IconButton onClick={() => onEdit(params)}>
+              <Edit titleAccess="Edit" />
+            </IconButton>
+            <IconButton>
+              <Delete titleAccess="Delete" htmlColor={"rgb(255, 86, 48)"} />
+            </IconButton>
+          </>
         );
       },
     },
@@ -121,11 +141,34 @@ export default function ProductsPage() {
       updated_date: "2023-04-08T12:19:23.448899Z",
     },
   ];
+
+  const handleAddProduct = (e, formData) => {
+    e.preventDefault();
+    setOpenAddForm(false);
+    console.log("formData : ", formData);
+    const newFormData = new FormData();
+    newFormData.append("name", formData.prdName);
+    newFormData.append("description", formData.description);
+    newFormData.append("category", formData.category);
+    newFormData.append("price", formData.price);
+    newFormData.append("photo", formData.imageFile);
+
+    console.log(newFormData);
+  };
   return (
     <PageLayout>
       <ResponsiveDrawer documentHeading={"Products"}>
+        <div className={style.buttonWrap}>
+          <Button
+            variant="contained"
+            className={style.addNewBtn}
+            onClick={() => setOpenAddForm(true)}
+          >
+            + Add New
+          </Button>
+        </div>
         <Paper>
-          <div style={{ height: "80vh", width: "100%", marginTop: 40 }}>
+          <div className={style.gridLayout}>
             <DataGrid
               getRowId={(row) => row.product_id}
               rows={rows}
@@ -138,9 +181,7 @@ export default function ProductsPage() {
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <span style={{ fontSize: 20, fontWeight: 700 }}>
-                      No Data
-                    </span>
+                    <span className={style.noDataFont}>No Data</span>
                   </Stack>
                 ),
                 NoResultsOverlay: () => (
@@ -156,6 +197,17 @@ export default function ProductsPage() {
             />
           </div>
         </Paper>
+        <ProductsForm
+          open={openAddForm || openEditForm}
+          handleClose={() => {
+            setOpenAddForm(false);
+            setOpenEditForm(false);
+            setEditData(null)
+          }}
+          handleSubmit={handleAddProduct}
+          dialogType={openAddForm ? "Add" : openEditForm ? "Edit" : ""}
+          editData={editData}
+        />
       </ResponsiveDrawer>
     </PageLayout>
   );
