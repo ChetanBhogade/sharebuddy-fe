@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllProducts } from "@/services/products";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import { useRouter } from "next/router";
 
 function ShopPage() {
   const [sortBy, setSortBy] = useState("latest");
