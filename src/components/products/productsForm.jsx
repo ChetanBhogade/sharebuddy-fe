@@ -22,6 +22,7 @@ export default function ProductsForm({
   editData
 }) {
   const [formData, setFormData] = useState({
+    prdId: "",
     prdName: "",
     description: "",
     category: "",
@@ -32,6 +33,7 @@ export default function ProductsForm({
   useEffect(()=>{
     if(editData !== null){
       setFormData({
+        prdId: editData.product_id,
         prdName: editData.name,
         description: editData.description,
         category: editData.category,
@@ -41,6 +43,7 @@ export default function ProductsForm({
     }
     else {
       setFormData({
+        prdId: "",
         prdName: "",
         description: "",
         category: "",
@@ -68,7 +71,7 @@ export default function ProductsForm({
   return (
     <Dialog open={open} onClose={handleClose} fullWidth>
       <DialogTitle style={{ paddingBottom: 0 }}>{dialogType === "Add" ? "Add New Product" : "Update Product"}</DialogTitle>
-      <form onSubmit={(e) => handleSubmit(e, formData)}>
+      <form onSubmit={(e) => handleSubmit(e, formData, dialogType)}>
         <DialogContent>
           <TextField
             autoFocus
@@ -145,7 +148,7 @@ export default function ProductsForm({
             size="small"
             onChange={handleInputChange}
             inputProps={{ accept: 'image/*' }}
-            required
+            required={dialogType === "Add"}
           />
         </DialogContent>
         <DialogActions>

@@ -1,7 +1,19 @@
-import { makeAuthGetCall } from "./common";
+import { makeAuthGetCall, makeAuthPostCall } from "./common";
 
 export const getAllProducts = () => {
   return makeAuthGetCall("get_all_products");
+};
+
+export const addProducts = (formata) => {
+  return makeAuthPostCall("add_product", formata);
+};
+
+export const updateProduct = (formData) => {
+  return makeAuthPostCall("update_product", formData);
+};
+
+export const removeProduct = (formData) => {
+  return makeAuthPostCall("delete_product", formData);
 };
 
 export const getProductsDetails = (productId) => {
