@@ -14,7 +14,7 @@ import {
 import Image from "next/image";
 import { ImageUrls } from "@/constants/images";
 import styles from "./ProductDetails.module.scss";
-import { ProductCategories, ProductSharingTypes } from "@/constants/common";
+import { ProductSharingTypes } from "@/constants/common";
 import classNames from "classnames";
 import moment from "moment";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -25,8 +25,7 @@ import { getErrorMessage } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { useRouter } from "next/router";
 import { placeQuote } from "@/services/quotes";
-
-const productAmount = 2500;
+import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function ProductDetails() {
   const [quoteData, setQuoteData] = useState({
@@ -41,6 +40,7 @@ function ProductDetails() {
 
   const { data: productDetailsData } = useQuery({
     queryKey: ["getProductsDetails"],
+    enabled: router.query?.productId?.length > 1,
     queryFn: () => getProductsDetails(router.query?.productId),
     onError: (error) => {
       console.log("getProductsDetails on error: ", error);
@@ -83,7 +83,7 @@ function ProductDetails() {
     setQuoteData({ ...quoteData, sharingType: event.target.value });
   };
 
-  const calculateDepositAmount = (category) => {
+  const calculateDepositAmount = (productAmount, category) => {
     switch (category) {
       case ProductSharingTypes.DEPOSIT:
         return (productAmount * 25) / 100;
@@ -107,8 +107,10 @@ function ProductDetails() {
     newFormData.append("from_date", quoteData.startDate.format("DD/MM/YYYY"));
     newFormData.append("to_date", quoteData.endDate.format("DD/MM/YYYY"));
     newFormData.append("meetup_point", quoteData.meetUp);
+    newFormData.append("remarks", "NA");
 
     placeQuoteMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
   };
 
   return (
@@ -118,7 +120,11 @@ function ProductDetails() {
           <Grid item xs={12} md={5.8}>
             <div className={styles.prodImgWrapper}>
               <Image
-                src={ImageUrls.product1}
+                src={
+                  productDetailsData?.response?.photo
+                    ? `${backendMediaAPI}${productDetailsData?.response.photo}`
+                    : ImageUrls.product1
+                }
                 alt="product image"
                 priority
                 style={{
@@ -131,14 +137,16 @@ function ProductDetails() {
           <Grid item xs={12} md={5.8}>
             <div className={styles.productInfoArea}>
               <Chip
-                label={ProductCategories[2]}
+                label={productDetailsData?.response?.category}
                 color="success"
                 variant="outlined"
               />
               <span className={styles.productTitle}>
-                Nike Air Force 1 - Sports Pro User
+                {productDetailsData?.response?.name}
               </span>
-              <span className={styles.productPrice}>₹ {productAmount}</span>
+              <span className={styles.productPrice}>
+                ₹ {Number(productDetailsData?.response?.rent_amount).toFixed(2)}
+              </span>
               <Divider
                 sx={{
                   width: "100%",
@@ -173,7 +181,13 @@ function ProductDetails() {
                 )}
               >
                 <span>Deposit Amt.</span>
-                <span>₹ {calculateDepositAmount(quoteData.sharingType)}</span>
+                <span>
+                  ₹{" "}
+                  {calculateDepositAmount(
+                    productDetailsData?.response?.rent_amount,
+                    quoteData.sharingType
+                  )}
+                </span>
               </div>
               <TextField
                 id="meet-up-basic"

@@ -108,12 +108,17 @@ function ShopPage() {
                     xl={2.5}
                   >
                     <ProductCard
-                      amount={product.price}
+                      amount={Number(product.rent_amount).toFixed(2)}
                       productImage={
                         product.photo && backendMediaAPI + product.photo
                       }
                       productId={product.product_id}
                       title={product.name}
+                      userImage={
+                        product?.user?.profile_photo
+                          ? `${backendMediaAPI}${product?.user?.profile_photo}`
+                          : null
+                      }
                     />
                   </Grid>
                 );
