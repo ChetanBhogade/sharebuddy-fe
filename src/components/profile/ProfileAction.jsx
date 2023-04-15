@@ -9,8 +9,6 @@ import { ImageUrls } from "@/constants/images";
 import { GlobalContext } from "@/contexts/GlobalContext";
 
 function ProfileAction() {
-  const [requestsList, setRequestsList] = useState([]);
-
   const { setSnackbar } = useContext(GlobalContext);
 
   const { data: allFriendRequests } = useQuery({
@@ -25,31 +23,26 @@ function ProfileAction() {
       });
     },
   });
-
   console.log("getFriendRequests: ", allFriendRequests);
-
-  useEffect(() => {
-    if (allFriendRequests && typeof allFriendRequests.response !== "string") {
-      setRequestsList(allFriendRequests.response);
-    }
-  }, [allFriendRequests]);
 
   return (
     <div>
-      {requestsList.length > 0 ? (
+      {allFriendRequests &&
+      typeof allFriendRequests.response !== "string" &&
+      allFriendRequests.response.length > 0 ? (
         <Grid container justifyContent="space-around" rowGap={2} columnGap={1}>
-          {requestsList.map((user) => {
+          {allFriendRequests?.response?.map((item) => {
             return (
-              <Grid key={user.user_id} item xs={12} md={5.5}>
+              <Grid key={item.sender.user_id} item xs={12} md={5.5}>
                 <UserCard
-                  username={user.full_name}
-                  userId={user.user_id}
+                  username={item.sender.full_name}
+                  userId={item.sender.user_id}
                   userImage={
-                    user.profile_photo
-                      ? `${backendMediaAPI}${user.profile_photo}`
+                    item.sender.profile_photo
+                      ? `${backendMediaAPI}${item.sender.profile_photo}`
                       : ImageUrls.defaultAvatar
                   }
-                  status={user.status}
+                  status={item.status}
                 />
               </Grid>
             );

@@ -3,8 +3,22 @@ import { IconButton, Paper } from "@mui/material";
 import Image from "next/image";
 import React from "react";
 import styles from "./Profile.module.scss";
-import { Delete, PersonAddAlt1 } from "@mui/icons-material";
+import { Delete, PersonAddAlt1, WatchLater } from "@mui/icons-material";
 import { backendMediaAPI } from "@/constants/BaseUrls";
+
+const getButtonColor = (type) => {
+  switch (type) {
+    case "add":
+      return "primary";
+    case "delete":
+      return "error";
+    case "pending":
+      return "warning";
+
+    default:
+      return "primary";
+  }
+};
 
 function ProfileUserCard({
   showDeleteBtn = false,
@@ -12,7 +26,21 @@ function ProfileUserCard({
   username = "Dummy User",
   handleClick,
   profileImg,
+  buttonType = "add",
 }) {
+  const getButton = (type) => {
+    switch (type) {
+      case "add":
+        return <PersonAddAlt1 />;
+      case "delete":
+        return <Delete />;
+      case "pending":
+        return <WatchLater />;
+
+      default:
+        return <PersonAddAlt1 />;
+    }
+  };
   return (
     <div>
       <Paper elevation={elevation} className={styles.profileUserCardPaper}>
@@ -33,11 +61,8 @@ function ProfileUserCard({
         </div>
 
         <div>
-          <IconButton
-            onClick={handleClick}
-            color={showDeleteBtn ? "error" : "primary"}
-          >
-            {showDeleteBtn ? <Delete /> : <PersonAddAlt1 />}
+          <IconButton onClick={handleClick} color={getButtonColor(buttonType)}>
+            {getButton(buttonType)}
           </IconButton>
         </div>
       </Paper>

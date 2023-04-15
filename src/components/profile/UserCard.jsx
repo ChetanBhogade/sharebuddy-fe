@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { ImageUrls } from "@/constants/images";
 import { FriendRequestStatus } from "@/constants/common";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { actionOnFriendRequest } from "@/services/friends";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { useContext } from "react";
@@ -16,6 +16,7 @@ import { GlobalContext } from "@/contexts/GlobalContext";
 
 function UserCard({ userId, username, userImage, status }) {
   const { setSnackbar, setIsBackdropLoading } = useContext(GlobalContext);
+  const queryClient = useQueryClient();
 
   const actionOnFriendRequestMutation = useMutation({
     mutationFn: (data) => actionOnFriendRequest(data),
@@ -25,6 +26,7 @@ function UserCard({ userId, username, userImage, status }) {
         data
       );
       setIsBackdropLoading(false);
+      queryClient.invalidateQueries({ queryKey: ["getFriendRequests"] });
     },
     onError: (error) => {
       console.log(
@@ -46,6 +48,7 @@ function UserCard({ userId, username, userImage, status }) {
     newFormData.append("sender_id", userId);
     newFormData.append("action", FriendRequestStatus.Accept);
     actionOnFriendRequestMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
   };
 
   const handleReject = () => {
@@ -54,6 +57,7 @@ function UserCard({ userId, username, userImage, status }) {
     newFormData.append("sender_id", userId);
     newFormData.append("action", FriendRequestStatus.Reject);
     actionOnFriendRequestMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
   };
 
   return (
