@@ -38,8 +38,8 @@ function ProfileFriends() {
               <Grid key={friend.user_id} item xs={12} md={5} lg={3.5}>
                 <ProfileUserCard
                   showDeleteBtn
-                  username={friend.username}
-                  profileImg={friend.profile_photo}
+                  username={friend.name}
+                  profileImg={friend.photo}
                   handleClick={() => {
                     handleRemoveFriend(friend.user_id);
                   }}
