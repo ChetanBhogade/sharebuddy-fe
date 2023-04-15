@@ -12,7 +12,7 @@ import { sendFriendRequest } from "@/services/friends";
 function FindFriendsPage() {
   const [searchText, setSearchText] = useState("");
 
-  const { setSnackbar, setIsBackdropLoading } = useContext(GlobalContext);
+  const { setSnackbar, setIsBackdropLoading, user } = useContext(GlobalContext);
 
   const { data: allUserDataResponse } = useQuery({
     queryKey: ["getAllUsers"],
@@ -60,8 +60,9 @@ function FindFriendsPage() {
 
   const filterUsers = (usersList) => {
     return usersList.filter((user) => {
-      const firstName = user.first_name?.toLowerCase();
-      return firstName && firstName.indexOf(searchText) > -1;
+      const fullName =
+        user.first_name?.toLowerCase() + " " + user.last_name?.toLowerCase();
+      return fullName && fullName.indexOf(searchText.toLowerCase()) > -1;
     });
   };
 
@@ -99,7 +100,8 @@ function FindFriendsPage() {
               sortListOfObjects(allUserDataResponse?.response, "first_name")
             ).map((userObj) => {
               return (
-                !userObj.is_superuser && (
+                !userObj.is_superuser &&
+                user.user_id !== userObj.user_id && (
                   <Grid key={userObj.user_id} item xs={12} md={4.8} lg={3.5}>
                     <ProfileUserCard
                       username={`${userObj.first_name} ${userObj.last_name}`}
@@ -107,6 +109,7 @@ function FindFriendsPage() {
                       handleClick={() => {
                         handleAddFriendClick(userObj?.user_id);
                       }}
+                      showDeleteBtn={userObj?.friend_status !== "non_friends"}
                     />
                   </Grid>
                 )

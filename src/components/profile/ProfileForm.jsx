@@ -329,7 +329,7 @@ function ProfileForm() {
             <LocalizationProvider dateAdapter={AdapterMoment}>
               <DatePicker
                 label="Date Of Birth"
-                value={moment(formData.dob)}
+                value={formData.dob ? moment(formData.dob) : null}
                 format="DD/MM/YYYY"
                 onChange={(newValue) =>
                   setFormData({

@@ -30,7 +30,7 @@ function ProfileFriends() {
   return (
     <div>
       {allFriendsData && typeof allFriendsData.response === "string" ? (
-        <h4>No Pending Friend Requests</h4>
+        <h4>You have no friends</h4>
       ) : (
         <Grid container justifyContent="space-around" rowGap={2}>
           {allFriendsData?.response?.map((friend) => {
