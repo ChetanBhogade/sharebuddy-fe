@@ -19,11 +19,12 @@ import classNames from "classnames";
 import moment from "moment";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getProductsDetails } from "@/services/products";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { useRouter } from "next/router";
+import { placeQuote } from "@/services/quotes";
 
 const productAmount = 2500;
 
@@ -35,7 +36,7 @@ function ProductDetails() {
     meetUp: "",
   });
 
-  const { setSnackbar } = useContext(GlobalContext);
+  const { setSnackbar, setIsBackdropLoading } = useContext(GlobalContext);
   const router = useRouter();
 
   const { data: productDetailsData } = useQuery({
@@ -56,6 +57,28 @@ function ProductDetails() {
     router.query?.productId
   );
 
+  const placeQuoteMutation = useMutation({
+    mutationFn: (data) => placeQuote(data),
+    onSuccess: (data) => {
+      console.log("placeQuoteMutation placeQuote on success: ", data);
+      setSnackbar({
+        isOpen: true,
+        message: data?.response || "Quote Placed Successfully.",
+        severity: "success",
+      });
+      setIsBackdropLoading(false);
+    },
+    onError: (error) => {
+      console.log("placeQuoteMutation placeQuote on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
+
   const handleShareTypeChange = (event) => {
     setQuoteData({ ...quoteData, sharingType: event.target.value });
   };
@@ -74,6 +97,18 @@ function ProductDetails() {
       default:
         return 0;
     }
+  };
+
+  const handlePlaceQuote = () => {
+    console.log("quote data: ", quoteData);
+    const newFormData = new FormData();
+    newFormData.append("product_id", router.query?.productId);
+    newFormData.append("exchange_type", quoteData.sharingType);
+    newFormData.append("from_date", quoteData.startDate.format("DD/MM/YYYY"));
+    newFormData.append("to_date", quoteData.endDate.format("DD/MM/YYYY"));
+    newFormData.append("meetup_point", quoteData.meetUp);
+
+    placeQuoteMutation.mutate(newFormData);
   };
 
   return (
@@ -159,6 +194,7 @@ function ProductDetails() {
                     <DatePicker
                       label="From Date"
                       value={quoteData.startDate}
+                      format="DD/MM/YYYY"
                       onChange={(newValue) =>
                         setQuoteData({ ...quoteData, startDate: newValue })
                       }
@@ -168,6 +204,7 @@ function ProductDetails() {
                     <DatePicker
                       label="To Date"
                       value={quoteData.endDate}
+                      format="DD/MM/YYYY"
                       onChange={(newValue) =>
                         setQuoteData({ ...quoteData, endDate: newValue })
                       }
@@ -175,7 +212,13 @@ function ProductDetails() {
                   </Grid>
                 </Grid>
               </LocalizationProvider>
-              <Button variant="contained" fullWidth className={styles.rowGap}>
+              <Button
+                variant="contained"
+                onClick={handlePlaceQuote}
+                fullWidth
+                disabled={quoteData.meetUp.length < 1}
+                className={styles.rowGap}
+              >
                 Place Quote
               </Button>
             </div>

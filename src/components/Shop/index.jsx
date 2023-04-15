@@ -14,11 +14,10 @@ import {
 } from "@mui/material";
 import styles from "./Shop.module.scss";
 import ProductCard from "../common/ProductCard";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getShopProducts } from "@/services/products";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
-import { useRouter } from "next/router";
 import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function ShopPage() {
