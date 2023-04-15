@@ -26,7 +26,7 @@ function LoginPage() {
     mutationFn: (data) => loginUser(data),
     onSuccess: (data) => {
       console.log("mutation loginUser on success: ", data);
-      if (data?.response?.refresh_token?.length > 1) {
+      if (data?.response?.access_token?.length > 1) {
         localStorage.setItem("sharebuddyToken", data?.response?.access_token);
         router.push("/");
       }

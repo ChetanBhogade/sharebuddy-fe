@@ -1,7 +1,7 @@
 import { makeAuthGetCall, makeAuthPostCall } from "./common";
 
 export const sendFriendRequest = (formData) => {
-  return makeAuthPostCall("send_request", formData);
+  return makeAuthPostCall("send_friend_request", formData);
 };
 
 export const actionOnFriendRequest = (formData) => {
@@ -9,11 +9,11 @@ export const actionOnFriendRequest = (formData) => {
 };
 
 export const getFriendRequests = () => {
-  return makeAuthGetCall("view_friend_request");
+  return makeAuthGetCall("get_friend_request");
 };
 
 export const getFriends = () => {
-  return makeAuthGetCall("view_friends");
+  return makeAuthGetCall("get_friends");
 };
 
 export const removeFriend = (formData) => {

@@ -11,3 +11,9 @@ export const ProductCategories = [
   "FOOTWEAR",
   "ACCESSORIES",
 ];
+
+export const ProductSharingTypes = {
+  SHARE: "SHARE",
+  RENT: "RENT",
+  DEPOSIT: "DEPOSIT",
+};

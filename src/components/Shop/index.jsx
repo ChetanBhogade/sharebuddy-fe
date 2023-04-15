@@ -14,10 +14,11 @@ import {
 } from "@mui/material";
 import styles from "./Shop.module.scss";
 import ProductCard from "../common/ProductCard";
-import { useQuery } from "@tanstack/react-query";
-import { getAllProducts } from "@/services/products";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getShopProducts } from "@/services/products";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function ShopPage() {
   const [sortBy, setSortBy] = useState("latest");
@@ -27,8 +28,8 @@ function ShopPage() {
   const { setSnackbar } = useContext(GlobalContext);
 
   const { data: allProducts } = useQuery({
-    queryKey: ["getAllProducts"],
-    queryFn: getAllProducts,
+    queryKey: ["getShopProducts"],
+    queryFn: getShopProducts,
     onError: (error) => {
       console.log("getAllProducts on error: ", error);
       setSnackbar({
@@ -95,8 +96,8 @@ function ShopPage() {
         <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
         <Grid container gap={2} justifyContent="space-around">
-          {allProducts && typeof allProducts.response === "string"
-            ? allProducts.response.map((product) => {
+          {allProducts && typeof allProducts.response !== "string"
+            ? allProducts.response?.map((product) => {
                 return (
                   <Grid
                     key={product.product_id}
@@ -106,12 +107,19 @@ function ShopPage() {
                     lg={3.5}
                     xl={2.5}
                   >
-                    <ProductCard />
+                    <ProductCard
+                      amount={product.price}
+                      productImage={
+                        product.photo && backendMediaAPI + product.photo
+                      }
+                      productId={product.product_id}
+                      title={product.name}
+                    />
                   </Grid>
                 );
               })
             : null}
-          <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
+          {/* <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
             <ProductCard />
           </Grid>
           <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
@@ -125,7 +133,7 @@ function ShopPage() {
           </Grid>
           <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
             <ProductCard />
-          </Grid>
+          </Grid> */}
         </Grid>
       </ResponsiveDrawer>
     </PageLayout>

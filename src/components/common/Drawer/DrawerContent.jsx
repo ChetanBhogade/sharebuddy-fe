@@ -3,20 +3,18 @@ import DrawerToolbar from "./DrawerToolbar";
 import {
   Divider,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
 import {
   AccountBox,
-  Drafts,
   ExitToApp,
   Inbox,
   PersonAdd,
   Category,
-  Send,
   ShoppingCart,
+  ReceiptLong,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { GlobalContext } from "@/contexts/GlobalContext";
@@ -55,11 +53,11 @@ function DrawerContent() {
           </ListItemIcon>
           <ListItemText primary="Products" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => router.push("/quotes")}>
           <ListItemIcon>
-            <Inbox style={{ color: "#fff" }} />
+            <ReceiptLong style={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Inbox" />
+          <ListItemText primary="Quotes" />
         </ListItemButton>
       </List>
       <Divider />

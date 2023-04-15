@@ -4,6 +4,10 @@ export const getAllProducts = () => {
   return makeAuthGetCall("get_all_products");
 };
 
+export const getShopProducts = () => {
+  return makeAuthGetCall("shop_products");
+};
+
 export const addProducts = (formata) => {
   return makeAuthPostCall("add_product", formata);
 };
