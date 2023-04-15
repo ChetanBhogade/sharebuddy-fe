@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import PageLayout from "../common/PageLayout";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import {
@@ -19,6 +19,11 @@ import classNames from "classnames";
 import moment from "moment";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { useQuery } from "@tanstack/react-query";
+import { getProductsDetails } from "@/services/products";
+import { getErrorMessage } from "@/utils/commonFunctions";
+import { GlobalContext } from "@/contexts/GlobalContext";
+import { useRouter } from "next/router";
 
 const productAmount = 2500;
 
@@ -29,6 +34,27 @@ function ProductDetails() {
     endDate: moment().add({ day: 1 }),
     meetUp: "",
   });
+
+  const { setSnackbar } = useContext(GlobalContext);
+  const router = useRouter();
+
+  const { data: productDetailsData } = useQuery({
+    queryKey: ["getProductsDetails"],
+    queryFn: () => getProductsDetails(router.query?.productId),
+    onError: (error) => {
+      console.log("getProductsDetails on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+    },
+  });
+  console.log(
+    "productDetailsData: ",
+    productDetailsData,
+    router.query?.productId
+  );
 
   const handleShareTypeChange = (event) => {
     setQuoteData({ ...quoteData, sharingType: event.target.value });

@@ -34,7 +34,10 @@ function RegisterPage() {
       console.log("mutation registerUser on success: ", data);
       setIsBackdropLoading(false);
       if (data.code === 200) {
-        router.push("/verify");
+        if (data?.response?.access_token?.length > 1) {
+          localStorage.setItem("sharebuddyToken", data?.response?.access_token);
+          router.push("/verify");
+        }
       } else {
         setSnackbar({
           isOpen: true,

@@ -4,6 +4,7 @@ import ProfileUserCard from "./ProfileUserCard";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { useQuery } from "@tanstack/react-query";
 import { getFriends } from "@/services/friends";
+import { getErrorMessage } from "@/utils/commonFunctions";
 
 function ProfileFriends() {
   const { setSnackbar } = useContext(GlobalContext);

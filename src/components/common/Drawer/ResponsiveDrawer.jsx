@@ -31,15 +31,15 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
-  useEffect(() => {
-    if (
-      user === null &&
-      !user?.is_mobile_number_verified &&
-      !user?.is_email_verified
-    ) {
-      router.push("/");
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (
+  //     user === null &&
+  //     !user?.is_mobile_number_verified &&
+  //     !user?.is_email_verified
+  //   ) {
+  //     router.push("/");
+  //   }
+  // }, [user]);
 
   return (
     <div className={styles.root}>

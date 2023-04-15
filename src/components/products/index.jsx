@@ -6,7 +6,14 @@ import PageLayout from "../common/PageLayout";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { getErrorMessage } from "@/utils/commonFunctions";
-import { Avatar, Button, IconButton, Paper, Rating, Stack } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  IconButton,
+  Paper,
+  Rating,
+  Stack,
+} from "@mui/material";
 import {
   addProducts,
   getAllProducts,
@@ -49,7 +56,7 @@ export default function ProductsPage() {
   };
 
   const onDelete = (params) => {
-    setDeleteData(params.row)
+    setDeleteData(params.row);
   };
 
   const productApiOnSucess = (data) => {
@@ -98,7 +105,7 @@ export default function ProductsPage() {
   });
 
   const handleSubmitProduct = (e, formData, type) => {
-    setIsBackdropLoading(true)
+    setIsBackdropLoading(true);
     e.preventDefault();
     setOpenAddForm(false);
     setOpenEditForm(false);
@@ -108,7 +115,7 @@ export default function ProductsPage() {
     newFormData.append("name", formData.prdName);
     newFormData.append("description", formData.description);
     newFormData.append("category", formData.category);
-    newFormData.append("price", formData.price);
+    newFormData.append("rent_amount", formData.price);
     newFormData.append("photo", formData.imageFile);
 
     console.log(newFormData);
@@ -120,13 +127,13 @@ export default function ProductsPage() {
     }
   };
 
-  const onDeleteProduct=()=>{
-    setIsBackdropLoading(true)
+  const onDeleteProduct = () => {
+    setIsBackdropLoading(true);
     const newFormData = new FormData();
     newFormData.append("product_id", deleteData.product_id);
-    setDeleteData(null)
-    DeleteProductDetails.mutate(newFormData)
-  }
+    setDeleteData(null);
+    DeleteProductDetails.mutate(newFormData);
+  };
 
   const columns = [
     {
@@ -135,7 +142,10 @@ export default function ProductsPage() {
       width: 90,
       renderCell: (params) => {
         return (
-          <Avatar src={`${backendMediaAPI}${params.row.photo}`} alt={params.row.name}/>
+          <Avatar
+            src={`${backendMediaAPI}${params.row.photo}`}
+            alt={params.row.name}
+          />
         );
       },
     },
@@ -229,7 +239,11 @@ export default function ProductsPage() {
           <div className={style.gridLayout}>
             <DataGrid
               getRowId={(row) => row.product_id}
-              rows={allUserDataResponse?.response || []}
+              rows={
+                (typeof allUserDataResponse?.response !== "string" &&
+                  allUserDataResponse?.response) ||
+                []
+              }
               columns={columns}
               isRowSelectable={false}
               disableColumnMenu
@@ -260,7 +274,7 @@ export default function ProductsPage() {
         />
         <DeleteDialog
           open={deleteData !== null}
-          handleClose={()=>setDeleteData(null)}
+          handleClose={() => setDeleteData(null)}
           name={deleteData?.name || ""}
           onSubmit={onDeleteProduct}
         />

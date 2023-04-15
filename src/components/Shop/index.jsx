@@ -15,7 +15,7 @@ import {
 import styles from "./Shop.module.scss";
 import ProductCard from "../common/ProductCard";
 import { useQuery } from "@tanstack/react-query";
-import { getAllProducts } from "@/services/products";
+import { getShopProducts } from "@/services/products";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { useRouter } from "next/router";
@@ -29,8 +29,8 @@ function ShopPage() {
   const { setSnackbar } = useContext(GlobalContext);
 
   const { data: allProducts } = useQuery({
-    queryKey: ["getAllProducts"],
-    queryFn: getAllProducts,
+    queryKey: ["getShopProducts"],
+    queryFn: getShopProducts,
     onError: (error) => {
       console.log("getAllProducts on error: ", error);
       setSnackbar({
@@ -98,7 +98,7 @@ function ShopPage() {
 
         <Grid container gap={2} justifyContent="space-around">
           {allProducts && typeof allProducts.response !== "string"
-            ? allProducts.response.map((product) => {
+            ? allProducts.response?.map((product) => {
                 return (
                   <Grid
                     key={product.product_id}
