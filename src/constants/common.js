@@ -17,3 +17,13 @@ export const ProductSharingTypes = {
   RENT: "RENT",
   DEPOSIT: "DEPOSIT",
 };
+
+export const QuoteStatusTypes = {
+  1: "PLACED",
+  2: "UPDATED",
+  3: "APPROVED",
+  4: "REJECTED",
+  5: "IN_TRANSIT",
+  6: "SHARED",
+  7: "COMPLETED",
+};

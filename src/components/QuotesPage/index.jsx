@@ -3,7 +3,8 @@ import PageLayout from "../common/PageLayout";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import { AppBar, Tab, Tabs } from "@mui/material";
 import TabPanel from "../common/TabPanel";
-import { useTheme } from "@emotion/react";
+import RequestedQuote from "./RequestedQuote";
+import MyQuotes from "./MyQuotes";
 
 function a11yProps(index) {
   return {
@@ -42,10 +43,10 @@ function QuotesPage() {
         </AppBar>
 
         <TabPanel value={sectionState} index={0}>
-          Item One
+          <RequestedQuote />
         </TabPanel>
         <TabPanel value={sectionState} index={1}>
-          Item Two
+          <MyQuotes />
         </TabPanel>
       </ResponsiveDrawer>
     </PageLayout>
