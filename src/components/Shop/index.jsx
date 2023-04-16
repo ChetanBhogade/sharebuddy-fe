@@ -16,12 +16,13 @@ import styles from "./Shop.module.scss";
 import ProductCard from "../common/ProductCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getShopProducts } from "@/services/products";
-import { getErrorMessage } from "@/utils/commonFunctions";
+import { getErrorMessage, sortListOfObjects } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function ShopPage() {
   const [sortBy, setSortBy] = useState("latest");
+  const [searchText, setSearchText] = useState("");
 
   const theme = useTheme();
   const matchesMdDown = useMediaQuery(theme.breakpoints.down("md"));
@@ -46,6 +47,35 @@ function ShopPage() {
     setSortBy(event.target.value);
   };
 
+  const getFilteredList = (defaultList, sortBy) => {
+    const filterSearch = (product) => {
+      const prodName = product.name?.toLowerCase();
+      return prodName && prodName.indexOf(searchText.toLowerCase()) > -1;
+    };
+
+    switch (sortBy) {
+      case "latest":
+        return sortListOfObjects(defaultList, "updated_date").filter(
+          filterSearch
+        );
+
+      case "priceHightToLow":
+        return sortListOfObjects(defaultList, "rent_amount", false).filter(
+          filterSearch
+        );
+
+      case "PriceLowToHigh":
+        return sortListOfObjects(defaultList, "rent_amount", true).filter(
+          filterSearch
+        );
+
+      default:
+        return sortListOfObjects(defaultList, "updated_date", false).filter(
+          filterSearch
+        );
+    }
+  };
+
   return (
     <PageLayout>
       <ResponsiveDrawer documentHeading={"Shop"}>
@@ -64,6 +94,8 @@ function ShopPage() {
               type="text"
               size="small"
               fullWidth={matchesMdDown}
+              value={searchText}
+              onChange={(event) => setSearchText(event.target.value)}
             />
           </Grid>
           <Grid
@@ -97,7 +129,7 @@ function ShopPage() {
 
         <Grid container gap={2} justifyContent="space-around">
           {allProducts && typeof allProducts.response !== "string"
-            ? allProducts.response?.map((product) => {
+            ? getFilteredList(allProducts.response, sortBy).map((product) => {
                 return (
                   <Grid
                     key={product.product_id}

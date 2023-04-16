@@ -17,6 +17,7 @@ import {
 import { getErrorMessage } from "@/utils/commonFunctions";
 import moment from "moment";
 import { useRouter } from "next/router";
+import validator from "validator";
 
 function ProfileForm() {
   const { user, setIsBackdropLoading, setSnackbar, setUser } =
@@ -46,6 +47,11 @@ function ProfileForm() {
     pincode: "",
   });
   const [hasAddress, setHasAddress] = useState(false);
+  const [addressErrors, setAddressErrors] = useState({
+    state: "",
+    country: "",
+    pincode: "",
+  });
 
   const { data: userData } = useQuery({
     queryKey: ["getLoggedInUserDetails"],
@@ -152,7 +158,10 @@ function ProfileForm() {
       newFormData.append("mobile_number", formData.mobile);
     }
 
-    newFormData.append("dob", moment(formData.dob).format("DD/MM/YYYY"));
+    newFormData.append(
+      "dob",
+      formData.dob ? moment(formData.dob).format("DD/MM/YYYY") : ""
+    );
     if (formData.image !== "-") {
       newFormData.append("photo", formData.image);
     }
@@ -161,12 +170,44 @@ function ProfileForm() {
     updateUserDetailsMutation.mutate(newFormData);
   };
 
+  const isAddressValid = () => {
+    if (!validator.isAlpha(addressFormData.state)) {
+      setAddressErrors({
+        ...addressErrors,
+        state: "Should not contain numbers.",
+      });
+      return false;
+    }
+    if (!validator.isAlpha(addressFormData.country)) {
+      setAddressErrors({
+        ...addressErrors,
+        country: "Should not contain numbers.",
+      });
+      return false;
+    }
+    if (!validator.isNumeric(addressFormData.pincode)) {
+      setAddressErrors({
+        ...addressErrors,
+        pincode: "Only numbers are allowed.",
+      });
+      return false;
+    }
+    setAddressErrors({
+      state: "",
+      country: "",
+      pincode: "",
+    });
+    return true;
+  };
+
   const handleAddressFormSubmit = () => {
     console.log(
       "Handle address form submit with data: ",
       addressFormData,
       hasAddress
     );
+    if (!isAddressValid()) return;
+
     const defaultData = {
       user_id: "-",
       id: 1,
@@ -331,6 +372,7 @@ function ProfileForm() {
                 label="Date Of Birth"
                 value={formData.dob ? moment(formData.dob) : null}
                 format="DD/MM/YYYY"
+                disableFuture
                 onChange={(newValue) =>
                   setFormData({
                     ...formData,
@@ -372,6 +414,7 @@ function ProfileForm() {
               <Button variant="text" color="primary" component="span">
                 Update Image
               </Button>
+              {formData.image !== "-" && formData.image?.name}
             </label>
           </Grid>
           <Grid item xs={12}>
@@ -400,6 +443,7 @@ function ProfileForm() {
         <AddressForm
           setAddressFormData={setAddressFormData}
           addressFormData={addressFormData}
+          addressErrors={addressErrors}
         />
       </DialogBox>
     </div>
