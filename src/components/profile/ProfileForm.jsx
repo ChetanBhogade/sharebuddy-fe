@@ -334,6 +334,7 @@ function ProfileForm() {
                 label="Date Of Birth"
                 value={formData.dob ? moment(formData.dob) : null}
                 format="DD/MM/YYYY"
+                disableFuture
                 onChange={(newValue) =>
                   setFormData({
                     ...formData,
@@ -375,6 +376,7 @@ function ProfileForm() {
               <Button variant="text" color="primary" component="span">
                 Update Image
               </Button>
+              {formData.image !== "-" && formData.image?.name}
             </label>
           </Grid>
           <Grid item xs={12}>

@@ -16,7 +16,7 @@ import styles from "./Shop.module.scss";
 import ProductCard from "../common/ProductCard";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getShopProducts } from "@/services/products";
-import { getErrorMessage } from "@/utils/commonFunctions";
+import { getErrorMessage, sortListOfObjects } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { backendMediaAPI } from "@/constants/BaseUrls";
 
@@ -44,6 +44,24 @@ function ShopPage() {
 
   const handleSortByChange = (event) => {
     setSortBy(event.target.value);
+  };
+
+  const getFilteredList = (defaultList, sortBy) => {
+    console.log("default list is: ", defaultList);
+
+    switch (sortBy) {
+      case "latest":
+        return sortListOfObjects(defaultList, "updated_date");
+
+      case "priceHightToLow":
+        return sortListOfObjects(defaultList, "rent_amount", false);
+
+      case "PriceLowToHigh":
+        return sortListOfObjects(defaultList, "rent_amount", true);
+
+      default:
+        return sortListOfObjects(defaultList, "updated_date");
+    }
   };
 
   return (
@@ -97,7 +115,7 @@ function ShopPage() {
 
         <Grid container gap={2} justifyContent="space-around">
           {allProducts && typeof allProducts.response !== "string"
-            ? allProducts.response?.map((product) => {
+            ? getFilteredList(allProducts.response, sortBy).map((product) => {
                 return (
                   <Grid
                     key={product.product_id}
