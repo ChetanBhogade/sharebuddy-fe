@@ -1,4 +1,3 @@
-import { ImageUrls } from "@/constants/images";
 import {
   Avatar,
   Card,
@@ -22,13 +21,14 @@ function QuotesCard({
   meetUpLocation,
   rentAmt,
   depositAmt,
+  productName,
 }) {
   return (
     <Card elevation={2} sx={{ maxWidth: 345 }}>
       <CardActionArea>
         <CardHeader
           avatar={<Avatar alt={customerName} src={customerPhoto} />}
-          title="This is Product Name"
+          title={customerName}
           subheader={`${moment(fromDate).format("DD/MM/YYYY")} - ${moment(
             toDate
           ).format("DD/MM/YYYY")}`}
@@ -40,6 +40,9 @@ function QuotesCard({
           alt="Product Image"
         />
         <CardContent>
+          <Typography variant="h5" color="text.primary">
+            {productName}
+          </Typography>
           <Typography variant="body2" color="text.secondary">
             {meetUpLocation}
           </Typography>

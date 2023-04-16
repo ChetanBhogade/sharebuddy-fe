@@ -58,6 +58,7 @@ function MyQuotes() {
                       : ImageUrls.product1
                   }
                   rentAmt={quote?.rent_amount}
+                  productName={quote?.product?.name}
                 />
               </Grid>
             );
