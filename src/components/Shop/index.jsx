@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import styles from "./Shop.module.scss";
 import ProductCard from "../common/ProductCard";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getShopProducts } from "@/services/products";
 import { getErrorMessage, sortListOfObjects } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
@@ -128,34 +128,36 @@ function ShopPage() {
         <Divider style={{ marginTop: 20, marginBottom: 20 }} />
 
         <Grid container gap={2} justifyContent="space-around">
-          {allProducts && typeof allProducts.response !== "string"
-            ? getFilteredList(allProducts.response, sortBy).map((product) => {
-                return (
-                  <Grid
-                    key={product.product_id}
-                    item
-                    xs={12}
-                    md={5.5}
-                    lg={3.5}
-                    xl={2.5}
-                  >
-                    <ProductCard
-                      amount={Number(product.rent_amount).toFixed(2)}
-                      productImage={
-                        product.photo && backendMediaAPI + product.photo
-                      }
-                      productId={product.product_id}
-                      title={product.name}
-                      userImage={
-                        product?.user?.profile_photo
-                          ? `${backendMediaAPI}${product?.user?.profile_photo}`
-                          : null
-                      }
-                    />
-                  </Grid>
-                );
-              })
-            : null}
+          {allProducts && typeof allProducts.response !== "string" ? (
+            getFilteredList(allProducts.response, sortBy).map((product) => {
+              return (
+                <Grid
+                  key={product.product_id}
+                  item
+                  xs={12}
+                  md={5.5}
+                  lg={3.5}
+                  xl={2.5}
+                >
+                  <ProductCard
+                    amount={Number(product.rent_amount).toFixed(2)}
+                    productImage={
+                      product.photo && backendMediaAPI + product.photo
+                    }
+                    productId={product.product_id}
+                    title={product.name}
+                    userImage={
+                      product?.user?.profile_photo
+                        ? `${backendMediaAPI}${product?.user?.profile_photo}`
+                        : null
+                    }
+                  />
+                </Grid>
+              );
+            })
+          ) : (
+            <h5>No Products Found</h5>
+          )}
           {/* <Grid item xs={12} md={5.5} lg={3.5} xl={2.5}>
             <ProductCard />
           </Grid>
