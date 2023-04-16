@@ -152,7 +152,10 @@ function ProfileForm() {
       newFormData.append("mobile_number", formData.mobile);
     }
 
-    newFormData.append("dob", moment(formData.dob).format("DD/MM/YYYY"));
+    newFormData.append(
+      "dob",
+      formData.dob ? moment(formData.dob).format("DD/MM/YYYY") : ""
+    );
     if (formData.image !== "-") {
       newFormData.append("photo", formData.image);
     }
