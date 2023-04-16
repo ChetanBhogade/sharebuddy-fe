@@ -22,6 +22,7 @@ import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function ShopPage() {
   const [sortBy, setSortBy] = useState("latest");
+  const [searchText, setSearchText] = useState("");
 
   const theme = useTheme();
   const matchesMdDown = useMediaQuery(theme.breakpoints.down("md"));
@@ -49,18 +50,31 @@ function ShopPage() {
   const getFilteredList = (defaultList, sortBy) => {
     console.log("default list is: ", defaultList);
 
+    const filterSearch = (product) => {
+      const prodName = product.name?.toLowerCase();
+      return prodName && prodName.indexOf(searchText.toLowerCase()) > -1;
+    };
+
     switch (sortBy) {
       case "latest":
-        return sortListOfObjects(defaultList, "updated_date");
+        return sortListOfObjects(defaultList, "updated_date").filter(
+          filterSearch
+        );
 
       case "priceHightToLow":
-        return sortListOfObjects(defaultList, "rent_amount", false);
+        return sortListOfObjects(defaultList, "rent_amount", false).filter(
+          filterSearch
+        );
 
       case "PriceLowToHigh":
-        return sortListOfObjects(defaultList, "rent_amount", true);
+        return sortListOfObjects(defaultList, "rent_amount", true).filter(
+          filterSearch
+        );
 
       default:
-        return sortListOfObjects(defaultList, "updated_date");
+        return sortListOfObjects(defaultList, "updated_date").filter(
+          filterSearch
+        );
     }
   };
 
@@ -82,6 +96,8 @@ function ShopPage() {
               type="text"
               size="small"
               fullWidth={matchesMdDown}
+              value={searchText}
+              onChange={(event) => setSearchText(event.target.value)}
             />
           </Grid>
           <Grid
