@@ -23,6 +23,8 @@ function RegisterPage() {
     mobile: "",
     password: "",
     cPassword: "",
+    firstName: "",
+    lastName: "",
   });
 
   const { setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
@@ -68,6 +70,22 @@ function RegisterPage() {
       formData.cPassword?.length > 1 &&
       formData.mobile?.length > 1
     ) {
+      if (!validator.isAlpha(formData.firstName)) {
+        setErrorStates({
+          ...errorStates,
+          firstName: "Should not container numbers.",
+        });
+        return false;
+      }
+
+      if (!validator.isAlpha(formData.lastName)) {
+        setErrorStates({
+          ...errorStates,
+          lastName: "Should not container numbers.",
+        });
+        return false;
+      }
+
       if (!validator.isMobilePhone(formData.mobile, "en-IN")) {
         setErrorStates({
           ...errorStates,
@@ -159,6 +177,8 @@ function RegisterPage() {
               autoComplete="firstName"
               type="text"
               required
+              error={errorStates.firstName.length > 1}
+              helperText={errorStates.firstName}
               value={formData.firstName}
               onChange={(e) => {
                 setFormData({
@@ -177,6 +197,8 @@ function RegisterPage() {
               autoComplete="lastName"
               type="text"
               required
+              error={errorStates.lastName.length > 1}
+              helperText={errorStates.lastName}
               value={formData.lastName}
               onChange={(e) => {
                 setFormData({
