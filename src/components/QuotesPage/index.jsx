@@ -37,16 +37,16 @@ function QuotesPage() {
             variant="fullWidth"
             aria-label="full width tabs example"
           >
-            <Tab label="Requested Quotes" {...a11yProps(0)} />
-            <Tab label="My Quotes" {...a11yProps(1)} />
+            <Tab label="My Quotes" {...a11yProps(0)} />
+            <Tab label="Requested Quotes" {...a11yProps(1)} />
           </Tabs>
         </AppBar>
 
         <TabPanel value={sectionState} index={0}>
-          <RequestedQuote />
+          <MyQuotes />
         </TabPanel>
         <TabPanel value={sectionState} index={1}>
-          <MyQuotes />
+          <RequestedQuote />
         </TabPanel>
       </ResponsiveDrawer>
     </PageLayout>
