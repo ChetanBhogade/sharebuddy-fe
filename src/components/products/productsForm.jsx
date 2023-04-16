@@ -37,7 +37,7 @@ export default function ProductsForm({
         prdName: editData.name,
         description: editData.description,
         category: editData.category,
-        price: parseFloat(editData.price),
+        price: parseFloat(editData.rent_amount),
         imageFile: "",
       })
     }

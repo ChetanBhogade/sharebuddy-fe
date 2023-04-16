@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import Moment from "moment";
 import { DataGrid, GridMoreVertIcon } from "@mui/x-data-grid";
 import { Edit, Delete } from "@mui/icons-material";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
@@ -156,31 +157,31 @@ export default function ProductsPage() {
       width: 130,
     },
     {
-      field: "price",
+      field: "rent_amount",
       headerName: "Price",
       width: 90,
       renderCell: (params) => {
         return (
-          <Stack>{parseFloat(params.row.price)}</Stack>
+          <Stack>{parseFloat(params.row.rent_amount)}</Stack>
           // <Avatar src={`${backendMediaAPI}${params.row.photo}`} alt={params.row.name}/>
         );
       },
     },
     { field: "category", headerName: "Category", width: 120 },
 
-    {
-      field: "ratings",
-      headerName: "Ratings",
-      width: 130,
-      type: "number",
-      renderCell: (params) => {
-        return (
-          <div>
-            <Rating name="read-only" value={params.row.ratings} readOnly />
-          </div>
-        );
-      },
-    },
+    // {
+    //   field: "ratings",
+    //   headerName: "Ratings",
+    //   width: 130,
+    //   type: "number",
+    //   renderCell: (params) => {
+    //     return (
+    //       <div>
+    //         <Rating name="read-only" value={params.row.ratings} readOnly />
+    //       </div>
+    //     );
+    //   },
+    // },
     {
       field: "is_available",
       headerName: "Is Available",
@@ -199,11 +200,21 @@ export default function ProductsPage() {
       field: "created_date",
       headerName: "Created Date",
       width: 120,
+      renderCell: (params) => {
+        return (
+          <Stack>{Moment(params.row.created_date, "YYYY-MM-DDTHH:mm:ss").format("DD-MMM-YYYY")}</Stack>
+        );
+      },
     },
     {
       field: "updated_date",
       headerName: "Updated Data",
       width: 120,
+      renderCell: (params) => {
+        return (
+          <Stack>{Moment(params.row.updated_date, "YYYY-MM-DDTHH:mm:ss").format("DD-MMM-YYYY")}</Stack>
+        );
+      },
     },
     {
       headerName: "",
