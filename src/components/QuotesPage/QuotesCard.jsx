@@ -11,6 +11,7 @@ import {
 import React from "react";
 import styles from "./QuotesCard.module.scss";
 import moment from "moment";
+import { useRouter } from "next/router";
 
 function QuotesCard({
   customerPhoto,
@@ -22,10 +23,17 @@ function QuotesCard({
   rentAmt,
   depositAmt,
   productName,
+  quotesId,
 }) {
+  const router = useRouter();
+
   return (
     <Card elevation={2} sx={{ maxWidth: 345 }}>
-      <CardActionArea>
+      <CardActionArea
+        onClick={() => {
+          router.push(`/quotes/${quotesId}`);
+        }}
+      >
         <CardHeader
           avatar={<Avatar alt={customerName} src={customerPhoto} />}
           title={customerName}

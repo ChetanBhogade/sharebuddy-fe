@@ -1,31 +1,17 @@
-import { GlobalContext } from "@/contexts/GlobalContext";
 import { getMyQuotes } from "@/services/quotes";
-import {
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
+import { Grid } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React, { useContext } from "react";
-import { StyledTableCell, StyledTableRow } from "../common/StyledTable";
-import { Cancel, CheckBox } from "@mui/icons-material";
-import { ProductSharingTypes, QuoteStatusTypes } from "@/constants/common";
+import React from "react";
 import QuotesCard from "./QuotesCard";
-import { backendAPI, backendMediaAPI } from "@/constants/BaseUrls";
+import { backendMediaAPI } from "@/constants/BaseUrls";
 import { ImageUrls } from "@/constants/images";
 
 function MyQuotes() {
-  const { user, setIsBackdropLoading, setSnackbar } = useContext(GlobalContext);
-
   const { data: myQuotes } = useQuery({
     queryKey: ["getMyQuotes"],
     queryFn: getMyQuotes,
   });
-  console.log("myQuotes: ", myQuotes, user?.user_id);
+  console.log("myQuotes: ", myQuotes);
 
   return (
     <>
@@ -59,6 +45,7 @@ function MyQuotes() {
                   }
                   rentAmt={quote?.rent_amount}
                   productName={quote?.product?.name}
+                  quotesId={quote?.quote_id}
                 />
               </Grid>
             );
