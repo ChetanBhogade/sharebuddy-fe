@@ -48,8 +48,6 @@ function ShopPage() {
   };
 
   const getFilteredList = (defaultList, sortBy) => {
-    console.log("default list is: ", defaultList);
-
     const filterSearch = (product) => {
       const prodName = product.name?.toLowerCase();
       return prodName && prodName.indexOf(searchText.toLowerCase()) > -1;
@@ -72,7 +70,7 @@ function ShopPage() {
         );
 
       default:
-        return sortListOfObjects(defaultList, "updated_date").filter(
+        return sortListOfObjects(defaultList, "updated_date", false).filter(
           filterSearch
         );
     }

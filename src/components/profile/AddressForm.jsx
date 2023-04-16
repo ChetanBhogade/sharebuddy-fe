@@ -1,6 +1,6 @@
 import { Grid, TextField } from "@mui/material";
 
-function AddressForm({ addressFormData, setAddressFormData }) {
+function AddressForm({ addressFormData, setAddressFormData, addressErrors }) {
   return (
     <form style={{ marginTop: 12 }}>
       <Grid container spacing={2}>
@@ -80,6 +80,8 @@ function AddressForm({ addressFormData, setAddressFormData }) {
             fullWidth
             autoComplete="state"
             type="text"
+            error={addressErrors.state.length > 1}
+            helperText={addressErrors.state}
             value={addressFormData.state}
             onChange={(e) => {
               setAddressFormData({
@@ -97,6 +99,8 @@ function AddressForm({ addressFormData, setAddressFormData }) {
             fullWidth
             autoComplete="country"
             type="country"
+            error={addressErrors.country.length > 1}
+            helperText={addressErrors.country}
             value={addressFormData.country}
             onChange={(e) => {
               setAddressFormData({
@@ -113,7 +117,9 @@ function AddressForm({ addressFormData, setAddressFormData }) {
             variant="outlined"
             fullWidth
             autoComplete="pincode"
-            type="text"
+            type="number"
+            error={addressErrors.pincode.length > 1}
+            helperText={addressErrors.pincode}
             value={addressFormData.pincode}
             onChange={(e) => {
               setAddressFormData({

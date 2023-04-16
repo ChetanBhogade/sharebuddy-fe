@@ -17,6 +17,7 @@ import {
 import { getErrorMessage } from "@/utils/commonFunctions";
 import moment from "moment";
 import { useRouter } from "next/router";
+import validator from "validator";
 
 function ProfileForm() {
   const { user, setIsBackdropLoading, setSnackbar, setUser } =
@@ -46,6 +47,11 @@ function ProfileForm() {
     pincode: "",
   });
   const [hasAddress, setHasAddress] = useState(false);
+  const [addressErrors, setAddressErrors] = useState({
+    state: "",
+    country: "",
+    pincode: "",
+  });
 
   const { data: userData } = useQuery({
     queryKey: ["getLoggedInUserDetails"],
@@ -164,12 +170,44 @@ function ProfileForm() {
     updateUserDetailsMutation.mutate(newFormData);
   };
 
+  const isAddressValid = () => {
+    if (!validator.isAlpha(addressFormData.state)) {
+      setAddressErrors({
+        ...addressErrors,
+        state: "Should not contain numbers.",
+      });
+      return false;
+    }
+    if (!validator.isAlpha(addressFormData.country)) {
+      setAddressErrors({
+        ...addressErrors,
+        country: "Should not contain numbers.",
+      });
+      return false;
+    }
+    if (!validator.isNumeric(addressFormData.pincode)) {
+      setAddressErrors({
+        ...addressErrors,
+        pincode: "Only numbers are allowed.",
+      });
+      return false;
+    }
+    setAddressErrors({
+      state: "",
+      country: "",
+      pincode: "",
+    });
+    return true;
+  };
+
   const handleAddressFormSubmit = () => {
     console.log(
       "Handle address form submit with data: ",
       addressFormData,
       hasAddress
     );
+    if (!isAddressValid()) return;
+
     const defaultData = {
       user_id: "-",
       id: 1,
@@ -405,6 +443,7 @@ function ProfileForm() {
         <AddressForm
           setAddressFormData={setAddressFormData}
           addressFormData={addressFormData}
+          addressErrors={addressErrors}
         />
       </DialogBox>
     </div>
