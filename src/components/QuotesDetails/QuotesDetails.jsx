@@ -1,13 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import PageLayout from "../common/PageLayout";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
-import { getQuotesDetails } from "@/services/quotes";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getQuotesDetails, updateQuote } from "@/services/quotes";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import {
-  Avatar,
   Button,
   Chip,
   Divider,
@@ -26,10 +25,19 @@ import { ImageUrls } from "@/constants/images";
 import classNames from "classnames";
 import { backendMediaAPI } from "@/constants/BaseUrls";
 import { ProductSharingTypes, QuoteStatusTypes } from "@/constants/common";
+import moment from "moment";
 
 function QuotesDetails() {
   const { setSnackbar, setIsBackdropLoading } = useContext(GlobalContext);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [updateQuoteData, setUpdateQuoteData] = useState({
+    fromDate: "",
+    toDate: "",
+    remarks: "",
+    exchangeType: "",
+    meetUp: "",
+  });
 
   const { data: quoteDetailsData } = useQuery({
     queryKey: ["getQuotesDetails"],
@@ -45,6 +53,61 @@ function QuotesDetails() {
     },
   });
   console.log("quoteDetailsData: ", quoteDetailsData, router.query?.quotesId);
+
+  const updateQuoteMutation = useMutation({
+    mutationFn: (data) => updateQuote(data),
+    onSuccess: (data) => {
+      console.log("updateQuoteMutation updateQuote on success: ", data);
+      setSnackbar({
+        isOpen: true,
+        message: data?.response || "Quote Updated Successfully.",
+        severity: "success",
+      });
+      setIsBackdropLoading(false);
+      queryClient.invalidateQueries(["getQuotesDetails"]);
+    },
+    onError: (error) => {
+      console.log("updateQuoteMutation updateQuote on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
+
+  const handleUpdateOrder = () => {
+    console.log("handle place order function called...");
+    const newFormData = new FormData();
+    newFormData.append("quote_id", quoteDetailsData?.response?.quote_id);
+    newFormData.append("remarks", updateQuoteData.remarks);
+    newFormData.append("exchange_type", updateQuoteData.exchangeType);
+    newFormData.append("meetup_point", updateQuoteData.meetUp);
+    newFormData.append(
+      "from_date",
+      moment(updateQuoteData.fromDate).format("DD/MM/YYYY")
+    );
+    newFormData.append(
+      "to_date",
+      moment(updateQuoteData.toDate).format("DD/MM/YYYY")
+    );
+
+    updateQuoteMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
+  };
+
+  useEffect(() => {
+    if (quoteDetailsData && quoteDetailsData?.response) {
+      setUpdateQuoteData({
+        fromDate: moment(quoteDetailsData?.response?.from_date),
+        toDate: moment(quoteDetailsData?.response?.to_date),
+        remarks: quoteDetailsData?.response?.remarks,
+        exchangeType: quoteDetailsData?.response?.exchange_type,
+        meetUp: quoteDetailsData?.response?.meetup_point,
+      });
+    }
+  }, [quoteDetailsData]);
 
   return (
     <PageLayout>
@@ -164,24 +227,25 @@ function QuotesDetails() {
               <DatePicker
                 sx={{ width: "100%" }}
                 label="From Date"
-                //   value={quoteData.startDate}
+                value={updateQuoteData.fromDate}
                 format="DD/MM/YYYY"
                 disablePast
-                //   onChange={(newValue) =>
-                //     setQuoteData({ ...quoteData, startDate: newValue })
-                //   }
+                onChange={(newValue) =>
+                  setUpdateQuoteData({ ...updateQuoteData, fromDate: newValue })
+                }
               />
             </Grid>
             <Grid item xs={5.8}>
               <DatePicker
                 sx={{ width: "100%" }}
                 label="From Date"
-                //   value={quoteData.startDate}
+                value={updateQuoteData.toDate}
                 format="DD/MM/YYYY"
                 disablePast
-                //   onChange={(newValue) =>
-                //     setQuoteData({ ...quoteData, startDate: newValue })
-                //   }
+                minDate={moment(updateQuoteData.fromDate).add({ day: 1 })}
+                onChange={(newValue) =>
+                  setUpdateQuoteData({ ...updateQuoteData, toDate: newValue })
+                }
               />
             </Grid>
             <Grid item xs={8}>
@@ -192,10 +256,13 @@ function QuotesDetails() {
                 fullWidth
                 multiline
                 maxRows={4}
-                // value={quoteData.meetUp}
-                // onChange={(event) =>
-                //   setQuoteData({ ...quoteData, meetUp: event.target.value })
-                // }
+                value={updateQuoteData.remarks}
+                onChange={(event) =>
+                  setUpdateQuoteData({
+                    ...updateQuoteData,
+                    remarks: event.target.value,
+                  })
+                }
               />
             </Grid>
             <Grid item xs={3.8}>
@@ -205,8 +272,13 @@ function QuotesDetails() {
                 </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
-                  //   value={quoteData.sharingType}
-                  //   onChange={handleShareTypeChange}
+                  value={updateQuoteData.exchangeType}
+                  onChange={(event) => {
+                    setUpdateQuoteData({
+                      ...updateQuoteData,
+                      exchangeType: event.target.value,
+                    });
+                  }}
                   displayEmpty
                   label="Exchange Type"
                   inputProps={{ "aria-label": "Without label" }}
@@ -231,19 +303,17 @@ function QuotesDetails() {
                 fullWidth
                 multiline
                 maxRows={4}
-                // value={quoteData.meetUp}
-                // onChange={(event) =>
-                //   setQuoteData({ ...quoteData, meetUp: event.target.value })
-                // }
+                value={updateQuoteData.meetUp}
+                onChange={(event) =>
+                  setUpdateQuoteData({
+                    ...updateQuoteData,
+                    meetUp: event.target.value,
+                  })
+                }
               />
             </Grid>
             <Grid item xs={12}>
-              <Button
-                variant="contained"
-                // onClick={handlePlaceQuote}
-                fullWidth
-                // disabled={quoteData.meetUp.length < 1}
-              >
+              <Button variant="contained" onClick={handleUpdateOrder} fullWidth>
                 Update Quote
               </Button>
             </Grid>

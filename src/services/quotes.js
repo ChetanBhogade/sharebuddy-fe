@@ -15,3 +15,7 @@ export const getMyQuotes = () => {
 export const getQuotesDetails = (quoteId) => {
   return makeAuthGetCall(`get_quote_details?quote_id=${quoteId}`);
 };
+
+export const updateQuote = (formData) => {
+  return makeAuthPostCall("update_quote", formData);
+};
