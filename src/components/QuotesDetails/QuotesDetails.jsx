@@ -4,7 +4,12 @@ import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { useRouter } from "next/router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getQuotesDetails, updateQuote } from "@/services/quotes";
+import {
+  approveQuote,
+  getQuotesDetails,
+  rejectQuote,
+  updateQuote,
+} from "@/services/quotes";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import {
   Button,
@@ -26,9 +31,10 @@ import classNames from "classnames";
 import { backendMediaAPI } from "@/constants/BaseUrls";
 import { ProductSharingTypes, QuoteStatusTypes } from "@/constants/common";
 import moment from "moment";
+import DialogBox from "../common/DialogBox";
 
 function QuotesDetails() {
-  const { setSnackbar, setIsBackdropLoading } = useContext(GlobalContext);
+  const { setSnackbar, setIsBackdropLoading, user } = useContext(GlobalContext);
   const router = useRouter();
   const queryClient = useQueryClient();
   const [updateQuoteData, setUpdateQuoteData] = useState({
@@ -38,6 +44,9 @@ function QuotesDetails() {
     exchangeType: "",
     meetUp: "",
   });
+  const [openConfirmationBox, setOpenConfirmationBox] = useState(false);
+  const [actionStatus, setActionStatus] = useState("");
+  const [confirmationRemark, setConfirmationRemark] = useState("");
 
   const { data: quoteDetailsData } = useQuery({
     queryKey: ["getQuotesDetails"],
@@ -52,29 +61,52 @@ function QuotesDetails() {
       });
     },
   });
-  console.log("quoteDetailsData: ", quoteDetailsData, router.query?.quotesId);
+
+  // Logs for checking API and other data
+  // console.log(
+  //   "quoteDetailsData: ",
+  //   quoteDetailsData,
+  //   router.query?.quotesId,
+  //   user
+  // );
+
+  const handleApiSuccess = (data) => {
+    console.log("updateQuoteMutation updateQuote on success: ", data);
+    setSnackbar({
+      isOpen: true,
+      message: data?.response || "Quote Updated Successfully.",
+      severity: "success",
+    });
+    setIsBackdropLoading(false);
+    queryClient.invalidateQueries(["getQuotesDetails"]);
+  };
+
+  const handleApiError = (error) => {
+    console.log("updateQuoteMutation updateQuote on error: ", error);
+    setSnackbar({
+      isOpen: true,
+      message: getErrorMessage(error),
+      severity: "error",
+    });
+    setIsBackdropLoading(false);
+  };
 
   const updateQuoteMutation = useMutation({
     mutationFn: (data) => updateQuote(data),
-    onSuccess: (data) => {
-      console.log("updateQuoteMutation updateQuote on success: ", data);
-      setSnackbar({
-        isOpen: true,
-        message: data?.response || "Quote Updated Successfully.",
-        severity: "success",
-      });
-      setIsBackdropLoading(false);
-      queryClient.invalidateQueries(["getQuotesDetails"]);
-    },
-    onError: (error) => {
-      console.log("updateQuoteMutation updateQuote on error: ", error);
-      setSnackbar({
-        isOpen: true,
-        message: getErrorMessage(error),
-        severity: "error",
-      });
-      setIsBackdropLoading(false);
-    },
+    onSuccess: handleApiSuccess,
+    onError: handleApiError,
+  });
+
+  const approveQuoteMutation = useMutation({
+    mutationFn: (data) => approveQuote(data),
+    onSuccess: handleApiSuccess,
+    onError: handleApiError,
+  });
+
+  const rejectQuoteMutation = useMutation({
+    mutationFn: (data) => rejectQuote(data),
+    onSuccess: handleApiSuccess,
+    onError: handleApiError,
   });
 
   const handleUpdateOrder = () => {
@@ -95,6 +127,41 @@ function QuotesDetails() {
 
     updateQuoteMutation.mutate(newFormData);
     setIsBackdropLoading(true);
+  };
+
+  const handleDialogSubmit = () => {
+    const newFormData = new FormData();
+    newFormData.append("quote_id", quoteDetailsData?.response?.quote_id);
+    newFormData.append("remarks", confirmationRemark);
+
+    if (actionStatus === "accept") {
+      console.log("accept btn was called");
+      approveQuoteMutation.mutate(newFormData);
+    }
+    if (actionStatus === "reject") {
+      console.log("reject btn was called");
+      rejectQuoteMutation.mutate(newFormData);
+    }
+    setIsBackdropLoading(true);
+    setOpenConfirmationBox(false);
+  };
+
+  const showActionBtn = () => {
+    if (!quoteDetailsData || !quoteDetailsData?.response) return true;
+
+    if (user?.user_id === quoteDetailsData?.response?.customer?.user_id) {
+      return !(
+        quoteDetailsData?.response?.approved_by_customer ||
+        quoteDetailsData?.response?.rejected_by_customer
+      );
+    }
+    if (user?.user_id === quoteDetailsData?.response?.owner?.user_id) {
+      return !(
+        quoteDetailsData?.response?.approved_by_owner ||
+        quoteDetailsData?.response?.rejected_by_owner
+      );
+    }
+    return true;
   };
 
   useEffect(() => {
@@ -317,29 +384,55 @@ function QuotesDetails() {
                 Update Quote
               </Button>
             </Grid>
-            <Grid item xs={5.9}>
-              <Button
-                variant="outlined"
-                // onClick={handlePlaceQuote}
-                fullWidth
-                color="success"
-                // disabled={quoteData.meetUp.length < 1}
-              >
-                Accept
-              </Button>
-            </Grid>
-            <Grid item xs={5.9}>
-              <Button
-                variant="outlined"
-                // onClick={handlePlaceQuote}
-                fullWidth
-                color="error"
-                // disabled={quoteData.meetUp.length < 1}
-              >
-                Reject
-              </Button>
-            </Grid>
+            {showActionBtn() && (
+              <>
+                <Grid item xs={5.9}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setOpenConfirmationBox(true);
+                      setActionStatus("accept");
+                    }}
+                    fullWidth
+                    color="success"
+                  >
+                    Accept
+                  </Button>
+                </Grid>
+                <Grid item xs={5.9}>
+                  <Button
+                    variant="outlined"
+                    onClick={() => {
+                      setOpenConfirmationBox(true);
+                      setActionStatus("reject");
+                    }}
+                    fullWidth
+                    color="error"
+                  >
+                    Reject
+                  </Button>
+                </Grid>
+              </>
+            )}
           </Grid>
+          <DialogBox
+            title={"Are you sure?"}
+            open={openConfirmationBox}
+            handleClose={() => setOpenConfirmationBox(false)}
+            handleSubmit={handleDialogSubmit}
+          >
+            <TextField
+              id="remark-confirmation"
+              label="Confirmation Remark"
+              variant="outlined"
+              fullWidth
+              multiline
+              maxRows={4}
+              sx={{ minWidth: 400, marginTop: 2 }}
+              value={confirmationRemark}
+              onChange={(event) => setConfirmationRemark(event.target.value)}
+            />
+          </DialogBox>
         </LocalizationProvider>
       </ResponsiveDrawer>
     </PageLayout>
