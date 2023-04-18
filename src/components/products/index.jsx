@@ -169,19 +169,19 @@ export default function ProductsPage() {
     },
     { field: "category", headerName: "Category", width: 120 },
 
-    // {
-    //   field: "ratings",
-    //   headerName: "Ratings",
-    //   width: 130,
-    //   type: "number",
-    //   renderCell: (params) => {
-    //     return (
-    //       <div>
-    //         <Rating name="read-only" value={params.row.ratings} readOnly />
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      field: "ratings",
+      headerName: "Ratings",
+      width: 130,
+      type: "number",
+      renderCell: (params) => {
+        return (
+          <div>
+            <Rating name="read-only" value={params.row.ratings} readOnly />
+          </div>
+        );
+      },
+    },
     {
       field: "is_available",
       headerName: "Is Available",
