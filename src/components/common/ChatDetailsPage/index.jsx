@@ -1,76 +1,116 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import PageLayout from "../PageLayout";
 import ResponsiveDrawer from "../Drawer/ResponsiveDrawer";
 import styles from "./ChatDetailsPage.module.scss";
-import { IconButton, Paper, TextField } from "@mui/material";
+import { Avatar, IconButton, Paper, TextField } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import classNames from "classnames";
 import moment from "moment";
-
-const isMe = false;
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { getMessagesList, sendMessageToFriend } from "@/services/chats";
+import { getErrorMessage } from "@/utils/commonFunctions";
+import { useRouter } from "next/router";
+import { GlobalContext } from "@/contexts/GlobalContext";
+import { ImageUrls } from "@/constants/images";
 
 function ChatDetailsPage() {
   const [messageText, setMessageText] = useState("");
-  const [messagesList, setMessagesList] = useState([
-    {
-      id: "acs",
-      message: "First Message",
-      time: moment("7/2/2023"),
-      isMe: true,
+
+  const router = useRouter();
+  const { setSnackbar, setIsBackdropLoading, user } = useContext(GlobalContext);
+
+  const { data: messagesListData } = useQuery({
+    queryKey: ["getMessagesList"],
+    queryFn: () => getMessagesList(router?.query?.chatId),
+    enabled: router.query?.chatId?.length > 1,
+    onError: (error) => {
+      console.log("getFriends on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
     },
-    {
-      id: "acsac",
-      message: "Second Message",
-      time: moment("8/2/2023"),
-      isMe: false,
+    refetchInterval: 1500,
+  });
+  console.log(
+    "messagesListData: ",
+    messagesListData,
+    router.query.chatId,
+    user
+  );
+
+  const sendMessageMutation = useMutation({
+    mutationFn: (data) => sendMessageToFriend(data),
+    onSuccess: (data) => {
+      console.log("sendMessageMutation on success: ", data);
+      setIsBackdropLoading(false);
     },
-  ]);
+    onError: (error) => {
+      console.log("sendMessageMutation on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setMessagesList((oldList) => {
-      return [
-        ...oldList,
-        {
-          id: `${Math.random()}`,
-          message: messageText,
-          time: moment(),
-          isMe: true,
-        },
-      ];
-    });
+
+    const newFormData = new FormData();
+    newFormData.append("receiver_id", router?.query?.chatId);
+    newFormData.append("message", messageText);
+    sendMessageMutation.mutate(newFormData);
     setMessageText("");
+    setIsBackdropLoading(true);
   };
 
   return (
     <PageLayout>
       <ResponsiveDrawer documentHeading={"Conversations"}>
-        <div>
-          <span>Chetan Bhogade</span>
+        <div className={styles.userDetailsContainer}>
+          <Avatar
+            alt={user?.first_name}
+            src={
+              user?.photo
+                ? backendMediaAPI + user.photo
+                : ImageUrls.defaultAvatar
+            }
+          />
+          <span>{user?.first_name}</span>
         </div>
         <Paper elevation={2} className={styles.container}>
           <div className={styles.messagesContainer}>
-            {messagesList.length > 0 &&
-              messagesList.map((msg) => {
+            {messagesListData &&
+              messagesListData.response.length > 0 &&
+              messagesListData.response?.map((msg) => {
                 return (
                   <div
-                    key={msg.id}
+                    key={msg.created_date}
                     className={styles.msgRow}
                     style={{
-                      alignItems: msg.isMe ? "flex-end" : "flex-start",
+                      alignItems:
+                        msg.sender.user_id === user.user_id
+                          ? "flex-end"
+                          : "flex-start",
                     }}
                   >
                     <div
                       className={classNames(
                         styles.messageBox,
-                        msg.isMe ? styles.isMe : styles.isFriend
+                        msg.sender.user_id === user.user_id
+                          ? styles.isMe
+                          : styles.isFriend
                       )}
                     >
                       <span className={styles.messageBoxText}>
                         {msg.message}
                       </span>
                       <span className={styles.messageBoxTime}>
-                        {moment(msg.time).format("DD MMM YY, hh:mm A")}
+                        {moment(msg.created_date).format("DD MMM YY, hh:mm A")}
                       </span>
                     </div>
                   </div>

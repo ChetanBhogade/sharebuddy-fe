@@ -61,7 +61,14 @@
 
 .isMe {
   border-bottom-right-radius: 2px;
-  background-color: $primary-light-color;
+  background-color: $primary-color;
   color: #fff;
   align-items: flex-end;
+}
+
+.userDetailsContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1em;
 }
