@@ -15,6 +15,7 @@ import {
   Category,
   ShoppingCart,
   ReceiptLong,
+  Chat,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { GlobalContext } from "@/contexts/GlobalContext";
@@ -58,6 +59,12 @@ function DrawerContent() {
             <ReceiptLong style={{ color: "#fff" }} />
           </ListItemIcon>
           <ListItemText primary="Quotes" />
+        </ListItemButton>
+        <ListItemButton onClick={() => router.push("/chat")}>
+          <ListItemIcon>
+            <Chat style={{ color: "#fff" }} />
+          </ListItemIcon>
+          <ListItemText primary="Chat" />
         </ListItemButton>
       </List>
       <Divider />
