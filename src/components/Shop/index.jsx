@@ -151,6 +151,7 @@ function ShopPage() {
                         ? `${backendMediaAPI}${product?.user?.profile_photo}`
                         : null
                     }
+                    userName={product?.user?.full_name}
                   />
                 </Grid>
               );

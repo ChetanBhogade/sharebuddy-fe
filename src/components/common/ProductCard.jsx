@@ -5,7 +5,14 @@ import Image from "next/image";
 import { ImageUrls } from "@/constants/images";
 import { useRouter } from "next/router";
 
-function ProductCard({ title, amount, productId, userImage, productImage }) {
+function ProductCard({
+  title,
+  amount,
+  productId,
+  userImage,
+  userName,
+  productImage,
+}) {
   const router = useRouter();
 
   return (
@@ -30,7 +37,10 @@ function ProductCard({ title, amount, productId, userImage, productImage }) {
       <div className={styles.descriptionArea}>
         <span className={styles.productTitle}>{title}</span>
         <div className={styles.infoSection}>
-          <Avatar alt="User Image" src={userImage || ImageUrls.avatar2} />
+          <div className={styles.userInfo}>
+            <Avatar alt="User Image" src={userImage || ImageUrls.avatar2} />
+            <span>{userName}</span>
+          </div>
           <span className={styles.cardPrice}>₹ {amount}</span>
         </div>
       </div>
