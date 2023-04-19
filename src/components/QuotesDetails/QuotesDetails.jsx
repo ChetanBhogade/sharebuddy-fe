@@ -13,14 +13,19 @@ import {
 import { getErrorMessage } from "@/utils/commonFunctions";
 import {
   Button,
+  Checkbox,
   Chip,
   Divider,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   Grid,
   InputLabel,
   MenuItem,
+  Rating,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import Image from "next/image";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -47,6 +52,11 @@ function QuotesDetails() {
   const [openConfirmationBox, setOpenConfirmationBox] = useState(false);
   const [actionStatus, setActionStatus] = useState("");
   const [confirmationRemark, setConfirmationRemark] = useState("");
+  const [isExchanged, setIsExchanged] = useState(false);
+  const [isReturned, setIsReturned] = useState(false);
+  const [customerRating, setCustomerRating] = useState(0);
+  const [ownerRating, setOwnerRating] = useState(0);
+  const [productRating, setProductRating] = useState(0);
 
   const { data: quoteDetailsData } = useQuery({
     queryKey: ["getQuotesDetails"],
@@ -164,6 +174,26 @@ function QuotesDetails() {
     return true;
   };
 
+  const handleExchangedSubmit = () => {
+    console.log("user has exchanged the product....");
+  };
+
+  const handleReturnedSubmit = () => {
+    console.log("user has returned the product....");
+  };
+
+  const handleOwnerRatingSubmission = () => {
+    console.log("owner has rated the customer with: ", customerRating);
+  };
+
+  const handleCustomerRatingSubmission = () => {
+    console.log(
+      "customer has rated the owner and product with: ",
+      ownerRating,
+      productRating
+    );
+  };
+
   useEffect(() => {
     if (quoteDetailsData && quoteDetailsData?.response) {
       setUpdateQuoteData({
@@ -175,6 +205,144 @@ function QuotesDetails() {
       });
     }
   }, [quoteDetailsData]);
+
+  const showExchangeUI = (
+    <>
+      <Grid item xs={12}>
+        <Typography component="legend" variant="h5">
+          Product is in Sharing State
+        </Typography>
+        <FormGroup
+          sx={{
+            marginTop: 2,
+          }}
+        >
+          <FormControlLabel
+            required
+            control={
+              <Checkbox
+                checked={isExchanged}
+                onChange={(event) => {
+                  setIsExchanged(event.target.checked);
+                }}
+              />
+            }
+            label="Exchanged By Me"
+            sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+          />
+        </FormGroup>
+      </Grid>
+      <Grid item xs={12}>
+        {isExchanged && (
+          <Button onClick={handleExchangedSubmit} variant="outlined">
+            Submit
+          </Button>
+        )}
+      </Grid>
+    </>
+  );
+
+  const showReturnUI = (
+    <>
+      <Grid item xs={12}>
+        <Typography component="legend" variant="h5">
+          Product is now need to return after end date
+        </Typography>
+        <FormGroup
+          sx={{
+            marginTop: 2,
+          }}
+        >
+          <FormControlLabel
+            required
+            control={
+              <Checkbox
+                checked={isReturned}
+                onChange={(event) => {
+                  setIsReturned(event.target.checked);
+                }}
+              />
+            }
+            label="Returned By Me"
+            sx={{ "& .MuiSvgIcon-root": { fontSize: 28 } }}
+          />
+        </FormGroup>
+      </Grid>
+      <Grid item xs={12}>
+        {isReturned && (
+          <Button onClick={handleReturnedSubmit} variant="outlined">
+            Submit
+          </Button>
+        )}
+      </Grid>
+    </>
+  );
+
+  const showClosedOwnerUI = (
+    <>
+      <Grid item xs={12}>
+        <Typography component="legend" variant="h5">
+          Rate the Customer
+        </Typography>
+        <Rating
+          name="simple-controlled"
+          sx={{ marginTop: 1.5, marginBottom: 2 }}
+          size="large"
+          value={customerRating}
+          onChange={(event, newValue) => {
+            setCustomerRating(newValue);
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        {customerRating > 0 && (
+          <Button onClick={handleOwnerRatingSubmission} variant="outlined">
+            Submit
+          </Button>
+        )}
+      </Grid>
+    </>
+  );
+
+  const showClosedCustomerUI = (
+    <>
+      <Grid item xs={12}>
+        <Typography component="legend" variant="h5">
+          Rate the Product
+        </Typography>
+        <Rating
+          name="simple-controlled"
+          sx={{ marginTop: 1.5, marginBottom: 2 }}
+          size="large"
+          value={productRating}
+          onChange={(event, newValue) => {
+            setProductRating(newValue);
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <Typography component="legend" variant="h5">
+          Rate the owner
+        </Typography>
+        <Rating
+          name="simple-controlled"
+          sx={{ marginTop: 1.5, marginBottom: 2 }}
+          size="large"
+          value={ownerRating}
+          onChange={(event, newValue) => {
+            setOwnerRating(newValue);
+          }}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        {productRating > 0 && ownerRating > 0 && (
+          <Button onClick={handleCustomerRatingSubmission} variant="outlined">
+            Submit
+          </Button>
+        )}
+      </Grid>
+    </>
+  );
 
   return (
     <PageLayout>
@@ -285,155 +453,191 @@ function QuotesDetails() {
             </div>
           </Grid>
         </Grid>
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-          <Grid container rowGap={2} justifyContent="space-between">
-            <Grid item xs={12}>
-              <h3>Want to update quote details?</h3>
-            </Grid>
-            <Grid item xs={5.8}>
-              <DatePicker
-                sx={{ width: "100%" }}
-                label="From Date"
-                value={updateQuoteData.fromDate}
-                format="DD/MM/YYYY"
-                disablePast
-                onChange={(newValue) =>
-                  setUpdateQuoteData({ ...updateQuoteData, fromDate: newValue })
-                }
-              />
-            </Grid>
-            <Grid item xs={5.8}>
-              <DatePicker
-                sx={{ width: "100%" }}
-                label="From Date"
-                value={updateQuoteData.toDate}
-                format="DD/MM/YYYY"
-                disablePast
-                minDate={moment(updateQuoteData.fromDate).add({ day: 1 })}
-                onChange={(newValue) =>
-                  setUpdateQuoteData({ ...updateQuoteData, toDate: newValue })
-                }
-              />
-            </Grid>
-            <Grid item xs={8}>
-              <TextField
-                id="remark-basic"
-                label="Remark"
-                variant="outlined"
-                fullWidth
-                multiline
-                maxRows={4}
-                value={updateQuoteData.remarks}
-                onChange={(event) =>
-                  setUpdateQuoteData({
-                    ...updateQuoteData,
-                    remarks: event.target.value,
-                  })
-                }
-              />
-            </Grid>
-            <Grid item xs={3.8}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Exchange Type
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  value={updateQuoteData.exchangeType}
-                  onChange={(event) => {
-                    setUpdateQuoteData({
-                      ...updateQuoteData,
-                      exchangeType: event.target.value,
-                    });
-                  }}
-                  displayEmpty
-                  label="Exchange Type"
-                  inputProps={{ "aria-label": "Without label" }}
-                >
-                  <MenuItem value={ProductSharingTypes.DEPOSIT}>
-                    {ProductSharingTypes.DEPOSIT}
-                  </MenuItem>
-                  <MenuItem value={ProductSharingTypes.RENT}>
-                    {ProductSharingTypes.RENT}
-                  </MenuItem>
-                  <MenuItem value={ProductSharingTypes.SHARE}>
-                    {ProductSharingTypes.SHARE}
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                id="meet-up-basic"
-                label="Meet Up Location"
-                variant="filled"
-                fullWidth
-                multiline
-                maxRows={4}
-                value={updateQuoteData.meetUp}
-                onChange={(event) =>
-                  setUpdateQuoteData({
-                    ...updateQuoteData,
-                    meetUp: event.target.value,
-                  })
-                }
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" onClick={handleUpdateOrder} fullWidth>
-                Update Quote
-              </Button>
-            </Grid>
-            {showActionBtn() && (
-              <>
-                <Grid item xs={5.9}>
-                  <Button
+        {!quoteDetailsData?.response?.is_shared &&
+          !quoteDetailsData?.response?.is_closed &&
+          !quoteDetailsData?.response?.is_approved && (
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <Grid container rowGap={2} justifyContent="space-between">
+                <Grid item xs={12}>
+                  <h3>Want to update quote details?</h3>
+                </Grid>
+                <Grid item xs={5.8}>
+                  <DatePicker
+                    sx={{ width: "100%" }}
+                    label="From Date"
+                    value={updateQuoteData.fromDate}
+                    format="DD/MM/YYYY"
+                    disablePast
+                    onChange={(newValue) =>
+                      setUpdateQuoteData({
+                        ...updateQuoteData,
+                        fromDate: newValue,
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid item xs={5.8}>
+                  <DatePicker
+                    sx={{ width: "100%" }}
+                    label="From Date"
+                    value={updateQuoteData.toDate}
+                    format="DD/MM/YYYY"
+                    disablePast
+                    minDate={moment(updateQuoteData.fromDate).add({ day: 1 })}
+                    onChange={(newValue) =>
+                      setUpdateQuoteData({
+                        ...updateQuoteData,
+                        toDate: newValue,
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    id="remark-basic"
+                    label="Remark"
                     variant="outlined"
-                    onClick={() => {
-                      setOpenConfirmationBox(true);
-                      setActionStatus("accept");
-                    }}
                     fullWidth
-                    color="success"
+                    multiline
+                    maxRows={4}
+                    value={updateQuoteData.remarks}
+                    onChange={(event) =>
+                      setUpdateQuoteData({
+                        ...updateQuoteData,
+                        remarks: event.target.value,
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid item xs={3.8}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">
+                      Exchange Type
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      value={updateQuoteData.exchangeType}
+                      onChange={(event) => {
+                        setUpdateQuoteData({
+                          ...updateQuoteData,
+                          exchangeType: event.target.value,
+                        });
+                      }}
+                      displayEmpty
+                      label="Exchange Type"
+                      inputProps={{ "aria-label": "Without label" }}
+                    >
+                      <MenuItem value={ProductSharingTypes.DEPOSIT}>
+                        {ProductSharingTypes.DEPOSIT}
+                      </MenuItem>
+                      <MenuItem value={ProductSharingTypes.RENT}>
+                        {ProductSharingTypes.RENT}
+                      </MenuItem>
+                      <MenuItem value={ProductSharingTypes.SHARE}>
+                        {ProductSharingTypes.SHARE}
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    id="meet-up-basic"
+                    label="Meet Up Location"
+                    variant="filled"
+                    fullWidth
+                    multiline
+                    maxRows={4}
+                    value={updateQuoteData.meetUp}
+                    onChange={(event) =>
+                      setUpdateQuoteData({
+                        ...updateQuoteData,
+                        meetUp: event.target.value,
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    onClick={handleUpdateOrder}
+                    fullWidth
                   >
-                    Accept
+                    Update Quote
                   </Button>
                 </Grid>
-                <Grid item xs={5.9}>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setOpenConfirmationBox(true);
-                      setActionStatus("reject");
-                    }}
-                    fullWidth
-                    color="error"
-                  >
-                    Reject
-                  </Button>
-                </Grid>
-              </>
-            )}
-          </Grid>
-          <DialogBox
-            title={"Are you sure?"}
-            open={openConfirmationBox}
-            handleClose={() => setOpenConfirmationBox(false)}
-            handleSubmit={handleDialogSubmit}
-          >
-            <TextField
-              id="remark-confirmation"
-              label="Confirmation Remark"
-              variant="outlined"
-              fullWidth
-              multiline
-              maxRows={4}
-              sx={{ minWidth: 400, marginTop: 2 }}
-              value={confirmationRemark}
-              onChange={(event) => setConfirmationRemark(event.target.value)}
-            />
-          </DialogBox>
-        </LocalizationProvider>
+                {showActionBtn() && (
+                  <>
+                    <Grid item xs={5.9}>
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setOpenConfirmationBox(true);
+                          setActionStatus("accept");
+                        }}
+                        fullWidth
+                        color="success"
+                      >
+                        Accept
+                      </Button>
+                    </Grid>
+                    <Grid item xs={5.9}>
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setOpenConfirmationBox(true);
+                          setActionStatus("reject");
+                        }}
+                        fullWidth
+                        color="error"
+                      >
+                        Reject
+                      </Button>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+              <DialogBox
+                title={"Are you sure?"}
+                open={openConfirmationBox}
+                handleClose={() => setOpenConfirmationBox(false)}
+                handleSubmit={handleDialogSubmit}
+              >
+                <TextField
+                  id="remark-confirmation"
+                  label="Confirmation Remark"
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  maxRows={4}
+                  sx={{ minWidth: 400, marginTop: 2 }}
+                  value={confirmationRemark}
+                  onChange={(event) =>
+                    setConfirmationRemark(event.target.value)
+                  }
+                />
+              </DialogBox>
+            </LocalizationProvider>
+          )}
+
+        <Grid container gap={2} marginTop={3}>
+          {/* Show the exchanged by me check box for user */}
+          {!quoteDetailsData?.response?.is_shared &&
+            !quoteDetailsData?.response?.is_closed &&
+            quoteDetailsData?.response?.is_approved &&
+            showExchangeUI}
+
+          {/* Show the returned by me check box for user */}
+          {quoteDetailsData?.response?.is_shared &&
+            !quoteDetailsData?.response?.is_closed &&
+            showReturnUI}
+        </Grid>
+
+        {/* Show the rating_for_user to the owner and 
+            rating_for_owner + rating_for_product to the customer  */}
+        {quoteDetailsData?.response?.is_closed &&
+        user?.user_id === quoteDetailsData?.response?.owner?.user_id
+          ? showClosedOwnerUI
+          : showClosedCustomerUI}
       </ResponsiveDrawer>
     </PageLayout>
   );
