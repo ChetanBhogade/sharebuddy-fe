@@ -83,7 +83,7 @@ function QuotesDetails() {
     router.query?.quotesId,
     user,
     "shared: ",
-    quoteDetailsData?.response?.is_shared,
+    quoteDetailsData?.response?.is_exchanged,
     "closed: ",
     quoteDetailsData?.response?.is_closed,
     "approved: ",
@@ -507,13 +507,14 @@ function QuotesDetails() {
               >
                 <span>Status</span>
                 <span>
-                  {QuoteStatusTypes[quoteDetailsData?.response?.status]}{" "}
+                  {/* {QuoteStatusTypes[quoteDetailsData?.response?.status]}{" "} */}
+                  {quoteDetailsData?.response?.status}
                 </span>
               </div>
             </div>
           </Grid>
         </Grid>
-        {!quoteDetailsData?.response?.is_shared &&
+        {!quoteDetailsData?.response?.is_exchanged &&
           !quoteDetailsData?.response?.is_closed &&
           !quoteDetailsData?.response?.is_approved && (
             <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -681,13 +682,13 @@ function QuotesDetails() {
 
         <Grid container gap={2} marginTop={3}>
           {/* Show the exchanged by me check box for user */}
-          {!quoteDetailsData?.response?.is_shared &&
+          {!quoteDetailsData?.response?.is_exchanged &&
             !quoteDetailsData?.response?.is_closed &&
             quoteDetailsData?.response?.is_approved &&
             showExchangeUI}
 
           {/* Show the returned by me check box for user */}
-          {quoteDetailsData?.response?.is_shared &&
+          {quoteDetailsData?.response?.is_exchanged &&
             !quoteDetailsData?.response?.is_closed &&
             showReturnUI}
 

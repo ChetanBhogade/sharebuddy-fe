@@ -4,11 +4,31 @@ import Image from "next/image";
 import React, { useContext } from "react";
 import styles from "./ResponsiveDrawer.module.scss";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import { useQuery } from "@tanstack/react-query";
+import { getUserWallet } from "@/services/auth";
+import { getErrorMessage } from "@/utils/commonFunctions";
 
 function DrawerToolbar() {
   const theme = useTheme();
 
-  const { user } = useContext(GlobalContext);
+  const { user, setSnackbar } = useContext(GlobalContext);
+
+  // Pending for tomorrow
+  // const { data: walletData } = useQuery({
+  //   queryKey: ["getUserWallet"],
+  //   queryFn: getUserWallet,
+  //   onError: (error) => {
+  //     console.log("getAllProducts on error: ", error);
+  //     setSnackbar({
+  //       isOpen: true,
+  //       message: getErrorMessage(error),
+  //       severity: "error",
+  //     });
+  //   },
+  //   staleTime: 1000 * 60 * 10,
+  //   cacheTime: 1000 * 60 * 20,
+  // });
+  // console.log("walletData: ", walletData);
 
   return (
     <div>
