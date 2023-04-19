@@ -29,6 +29,9 @@ function DrawerToolbar() {
         <Typography variant="subtitle1" noWrap>
           {`Welcome ${user?.first_name} ${user?.last_name}`}
         </Typography>
+        <Typography variant="subtitle2" sx={{ fontWeight: "700" }} noWrap>
+          {`Wallet Balance: - ₹ 50`}
+        </Typography>
       </div>
     </div>
   );
