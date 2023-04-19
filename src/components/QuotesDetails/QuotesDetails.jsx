@@ -77,12 +77,19 @@ function QuotesDetails() {
   });
 
   // Logs for checking API and other data
-  // console.log(
-  //   "quoteDetailsData: ",
-  //   quoteDetailsData,
-  //   router.query?.quotesId,
-  //   user
-  // );
+  console.log(
+    "quoteDetailsData: ",
+    quoteDetailsData,
+    router.query?.quotesId,
+    user,
+    "shared: ",
+    quoteDetailsData?.response?.is_shared,
+    "closed: ",
+    quoteDetailsData?.response?.is_closed,
+    "approved: ",
+    quoteDetailsData?.response?.is_approved,
+    user?.user_id === quoteDetailsData?.response?.owner?.user_id
+  );
 
   const handleApiSuccess = (data) => {
     console.log("updateQuoteMutation updateQuote on success: ", data);
@@ -683,14 +690,14 @@ function QuotesDetails() {
           {quoteDetailsData?.response?.is_shared &&
             !quoteDetailsData?.response?.is_closed &&
             showReturnUI}
-        </Grid>
 
-        {/* Show the rating_for_user to the owner and 
+          {/* Show the rating_for_user to the owner and 
             rating_for_owner + rating_for_product to the customer  */}
-        {quoteDetailsData?.response?.is_closed &&
-        user?.user_id === quoteDetailsData?.response?.owner?.user_id
-          ? showClosedOwnerUI
-          : showClosedCustomerUI}
+          {!!quoteDetailsData?.response?.is_closed &&
+            (user?.user_id === quoteDetailsData?.response?.owner?.user_id
+              ? showClosedOwnerUI
+              : showClosedCustomerUI)}
+        </Grid>
       </ResponsiveDrawer>
     </PageLayout>
   );
