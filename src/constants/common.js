@@ -27,3 +27,10 @@ export const QuoteStatusTypes = {
   6: "SHARED",
   7: "COMPLETED",
 };
+
+export const notificationRedirects = {
+  QUOTE: "/quotes",
+  FRIEND: "/profile",
+  FRIEND_REQUEST: "/profile",
+  PRODUCT: "/shop",
+};
