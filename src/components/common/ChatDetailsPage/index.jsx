@@ -6,7 +6,7 @@ import { Avatar, IconButton, Paper, TextField } from "@mui/material";
 import { Send } from "@mui/icons-material";
 import classNames from "classnames";
 import moment from "moment";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getMessagesList, sendMessageToFriend } from "@/services/chats";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { useRouter } from "next/router";
@@ -18,6 +18,7 @@ function ChatDetailsPage() {
 
   const router = useRouter();
   const { setSnackbar, setIsBackdropLoading, user } = useContext(GlobalContext);
+  const queryClient = useQueryClient();
 
   const { data: messagesListData } = useQuery({
     queryKey: ["getMessagesList"],
@@ -31,7 +32,7 @@ function ChatDetailsPage() {
         severity: "error",
       });
     },
-    refetchInterval: 1500,
+    refetchInterval: 5500,
   });
   console.log(
     "messagesListData: ",
@@ -45,6 +46,7 @@ function ChatDetailsPage() {
     onSuccess: (data) => {
       console.log("sendMessageMutation on success: ", data);
       setIsBackdropLoading(false);
+      queryClient.invalidateQueries(["getMessagesList"]);
     },
     onError: (error) => {
       console.log("sendMessageMutation on error: ", error);

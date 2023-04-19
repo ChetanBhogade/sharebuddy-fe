@@ -16,18 +16,20 @@ import {
 import { ImageUrls } from "@/constants/images";
 import { Mail } from "@mui/icons-material";
 import { useQuery } from "@tanstack/react-query";
-import { getFriends } from "@/services/friends";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { backendMediaAPI } from "@/constants/BaseUrls";
 import { useRouter } from "next/router";
+import { getChatContactList } from "@/services/chats";
+import moment from "moment";
+import { getErrorMessage } from "@/utils/commonFunctions";
 
 function ChatPage() {
   const { setSnackbar } = useContext(GlobalContext);
   const router = useRouter();
 
-  const { data: allFriendsData } = useQuery({
-    queryKey: ["getFriends"],
-    queryFn: getFriends,
+  const { data: allContactList } = useQuery({
+    queryKey: ["getChatContactList"],
+    queryFn: getChatContactList,
     onError: (error) => {
       console.log("getFriends on error: ", error);
       setSnackbar({
@@ -37,23 +39,23 @@ function ChatPage() {
       });
     },
   });
-  console.log("allFriendsData: ", allFriendsData);
+  console.log("allFriendsData: ", allContactList);
 
   return (
     <PageLayout>
       <ResponsiveDrawer documentHeading={"Chat"}>
         <h2>Contact List - Chat With Your Friends</h2>
-        {allFriendsData && typeof allFriendsData.response === "string" ? (
+        {allContactList && typeof allContactList.response === "string" ? (
           <h4>You have no friends</h4>
         ) : (
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
-            {allFriendsData &&
-              allFriendsData.response.map((friend) => {
+            {allContactList &&
+              allContactList?.response?.map((friend) => {
                 return (
                   <div key={friend.user_id}>
                     <ListItemButton
                       onClick={() => {
-                        router.push(`/chat/${friend.user_id}`);
+                        router.push(`/chat/${friend?.user_id}`);
                       }}
                     >
                       <ListItem
@@ -64,7 +66,10 @@ function ChatPage() {
                             edge="end"
                             aria-label="notification-count-button"
                           >
-                            <Badge badgeContent={100} color="secondary">
+                            <Badge
+                              badgeContent={friend?.unread_count}
+                              color="secondary"
+                            >
                               <Mail />
                             </Badge>
                           </IconButton>
@@ -73,16 +78,16 @@ function ChatPage() {
                       >
                         <ListItemAvatar>
                           <Avatar
-                            alt={friend.name}
+                            alt={friend?.friend_name}
                             src={
-                              friend.photo
+                              friend?.photo
                                 ? backendMediaAPI + friend.photo
                                 : ImageUrls.defaultAvatar
                             }
                           />
                         </ListItemAvatar>
                         <ListItemText
-                          primary={friend.name}
+                          primary={friend?.friend_name}
                           secondary={
                             <React.Fragment>
                               <Typography
@@ -91,11 +96,12 @@ function ChatPage() {
                                 variant="body2"
                                 color="text.primary"
                               >
-                                14 Jan 23, 8:32PM
+                                {friend?.timestamp &&
+                                  moment(friend?.timestamp).format(
+                                    "DD MMM YY, h:mmA"
+                                  )}
                               </Typography>
-                              {
-                                " — Wish I could come, but I'm out of town this…"
-                              }
+                              {` — ${friend?.last_message}`}
                             </React.Fragment>
                           }
                         />

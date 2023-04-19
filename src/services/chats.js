@@ -7,3 +7,7 @@ export const sendMessageToFriend = (formData) => {
 export const getMessagesList = (userId) => {
   return makeAuthGetCall(`message_list?receiver_id=${userId}`);
 };
+
+export const getChatContactList = () => {
+  return makeAuthGetCall("get_last_message");
+};

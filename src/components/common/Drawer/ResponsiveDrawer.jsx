@@ -36,6 +36,7 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
+  // commenting effect call
   // useEffect(() => {
   //   if (
   //     user === null &&
@@ -71,7 +72,10 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
             <Typography variant="h5" noWrap>
               {documentHeading}
             </Typography>
-            <NotificationsButton/>
+            <div className={styles.notificationWrapper}>
+              <span>Notifications</span>
+              <NotificationsButton />
+            </div>
           </Box>
         </Toolbar>
       </AppBar>

@@ -16,7 +16,7 @@
 }
 
 .menuButton {
-  margin-right: 2em;
+  margin-right: 0.2em;
   @media (min-width: $sm) {
     display: none;
   }
@@ -64,4 +64,15 @@
   justify-content: center;
   align-items: center;
   padding: 1em;
+}
+
+.notificationWrapper {
+  display: flex;
+  align-items: center;
+  & > span {
+    display: none;
+    @media (min-width: $sm) {
+      display: block;
+    }
+  }
 }
