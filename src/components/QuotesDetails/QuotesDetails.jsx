@@ -9,6 +9,10 @@ import {
   getQuotesDetails,
   rejectQuote,
   updateQuote,
+  updateQuoteProductRatings,
+  updateQuoteUserRatings,
+  updateQuotesExchangeStatus,
+  updateQuotesReturnStatus,
 } from "@/services/quotes";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import {
@@ -119,6 +123,30 @@ function QuotesDetails() {
     onError: handleApiError,
   });
 
+  const updateQuotesExchangeStatusMutation = useMutation({
+    mutationFn: (data) => updateQuotesExchangeStatus(data),
+    onSuccess: handleApiSuccess,
+    onError: handleApiError,
+  });
+
+  const updateQuotesReturnStatusMutation = useMutation({
+    mutationFn: (data) => updateQuotesReturnStatus(data),
+    onSuccess: handleApiSuccess,
+    onError: handleApiError,
+  });
+
+  const updateQuoteUserRatingsMutation = useMutation({
+    mutationFn: (data) => updateQuoteUserRatings(data),
+    onSuccess: handleApiSuccess,
+    onError: handleApiError,
+  });
+
+  const updateQuoteProductRatingsMutation = useMutation({
+    mutationFn: (data) => updateQuoteProductRatings(data),
+    onSuccess: handleApiSuccess,
+    onError: handleApiError,
+  });
+
   const handleUpdateOrder = () => {
     console.log("handle place order function called...");
     const newFormData = new FormData();
@@ -176,14 +204,27 @@ function QuotesDetails() {
 
   const handleExchangedSubmit = () => {
     console.log("user has exchanged the product....");
+    const newFormData = new FormData();
+    newFormData.append("quote_id", quoteDetailsData?.response?.quote_id);
+    updateQuotesExchangeStatusMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
   };
 
   const handleReturnedSubmit = () => {
     console.log("user has returned the product....");
+    const newFormData = new FormData();
+    newFormData.append("quote_id", quoteDetailsData?.response?.quote_id);
+    updateQuotesReturnStatusMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
   };
 
   const handleOwnerRatingSubmission = () => {
     console.log("owner has rated the customer with: ", customerRating);
+    const newFormData = new FormData();
+    newFormData.append("quote_id", quoteDetailsData?.response?.quote_id);
+    newFormData.append("ratings", customerRating);
+    updateQuoteUserRatingsMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
   };
 
   const handleCustomerRatingSubmission = () => {
@@ -192,6 +233,18 @@ function QuotesDetails() {
       ownerRating,
       productRating
     );
+
+    const newFormUserData = new FormData();
+    newFormUserData.append("quote_id", quoteDetailsData?.response?.quote_id);
+    newFormUserData.append("ratings", ownerRating);
+
+    const newFormProductData = new FormData();
+    newFormProductData.append("quote_id", quoteDetailsData?.response?.quote_id);
+    newFormProductData.append("ratings", productRating);
+
+    updateQuoteUserRatingsMutation.mutate(newFormUserData);
+    updateQuoteProductRatingsMutation.mutate(newFormProductData);
+    setIsBackdropLoading(true);
   };
 
   useEffect(() => {

@@ -27,3 +27,19 @@ export const approveQuote = (formData) => {
 export const rejectQuote = (formData) => {
   return makeAuthPostCall("reject_quote", formData);
 };
+
+export const updateQuotesExchangeStatus = (formData) => {
+  return makeAuthPostCall("update_exchange_status", formData);
+};
+
+export const updateQuotesReturnStatus = (formData) => {
+  return makeAuthPostCall("update_return_status", formData);
+};
+
+export const updateQuoteUserRatings = (formData) => {
+  return makeAuthPostCall("update_user_ratings", formData);
+};
+
+export const updateQuoteProductRatings = (formData) => {
+  return makeAuthPostCall("update_product_ratings", formData);
+};
