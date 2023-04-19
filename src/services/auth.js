@@ -40,6 +40,10 @@ export const getUserAddress = () => {
   return makeAuthGetCall("get_user_address");
 };
 
+export const getUserWallet = () => {
+  return makeAuthGetCall("get_user_address");
+};
+
 export const addUserAddress = (formData) => {
   return makeAuthPostCall("add_address", formData);
 };
