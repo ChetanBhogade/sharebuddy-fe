@@ -80,7 +80,7 @@ export default function NotificationsButton() {
       <IconButton
         onClick={handleClick}
         size="small"
-        sx={{ ml: 2 }}
+        sx={{ ml: 1 }}
         aria-controls={open ? "notification-menu" : undefined}
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
