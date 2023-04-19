@@ -1,5 +1,9 @@
+import { notificationRedirects } from "@/constants/common";
 import { GlobalContext } from "@/contexts/GlobalContext";
-import { getInAppNotification, markNotificationAsRead } from "@/services/notifications";
+import {
+  getInAppNotification,
+  markNotificationAsRead,
+} from "@/services/notifications";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { Notifications } from "@mui/icons-material";
 import {
@@ -12,10 +16,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 import { useContext, useState } from "react";
 
 export default function NotificationsButton() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const router = useRouter();
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -26,7 +32,7 @@ export default function NotificationsButton() {
 
   const { setSnackbar } = useContext(GlobalContext);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const { data: notificationsData } = useQuery({
     queryKey: ["getInAppNotification"],
@@ -49,10 +55,7 @@ export default function NotificationsButton() {
       queryClient.invalidateQueries({ queryKey: ["getInAppNotification"] });
     },
     onError: (error) => {
-      console.log(
-        "notification mark as read on error: ",
-        error
-      );
+      console.log("notification mark as read on error: ", error);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),
@@ -61,11 +64,16 @@ export default function NotificationsButton() {
     },
   });
 
-  const onClickNotification=(id)=>{
+  const onClickNotification = (item) => {
     const newFormaData = new FormData();
-    newFormaData.append("notification_id", id)
-    markAsRead.mutate(newFormaData)
-  }
+    newFormaData.append("notification_id", item.id);
+    markAsRead.mutate(newFormaData);
+    router.push(
+      `${notificationRedirects[item.type]}${
+        item.type_id ? "/" + item.type_id : ""
+      }`
+    );
+  };
 
   return (
     <Box>
@@ -129,7 +137,7 @@ export default function NotificationsButton() {
               whiteSpace: "normal",
               backgroundColor: item.status === "UNREAD" ? "#eeeded" : "",
             }}
-            onClick={()=>onClickNotification(item.id)}
+            onClick={() => onClickNotification(item)}
           >
             {item.text}
           </MenuItem>
