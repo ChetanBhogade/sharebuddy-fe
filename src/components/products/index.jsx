@@ -117,12 +117,14 @@ export default function ProductsPage() {
     newFormData.append("description", formData.description);
     newFormData.append("category", formData.category);
     newFormData.append("rent_amount", formData.price);
-    newFormData.append("photo", formData.imageFile);
+    
 
     console.log(newFormData);
     if (type === "Add") {
+      newFormData.append("photo", formData.imageFile);
       addProductDetails.mutate(newFormData);
     } else if (type === "Edit") {
+      newFormData.append("product_photo", formData.imageFile);
       newFormData.append("product_id", formData.prdId);
       updateProductDetails.mutate(newFormData);
     }
@@ -169,19 +171,19 @@ export default function ProductsPage() {
     },
     { field: "category", headerName: "Category", width: 120 },
 
-    // {
-    //   field: "ratings",
-    //   headerName: "Ratings",
-    //   width: 130,
-    //   type: "number",
-    //   renderCell: (params) => {
-    //     return (
-    //       <div>
-    //         <Rating name="read-only" value={params.row.ratings} readOnly />
-    //       </div>
-    //     );
-    //   },
-    // },
+    {
+      field: "ratings",
+      headerName: "Ratings",
+      width: 130,
+      type: "number",
+      renderCell: (params) => {
+        return (
+          <div>
+            <Rating name="read-only" value={params.row.ratings} readOnly />
+          </div>
+        );
+      },
+    },
     {
       field: "is_available",
       headerName: "Is Available",

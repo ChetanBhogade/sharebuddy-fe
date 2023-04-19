@@ -2,20 +2,25 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./ResponsiveDrawer.module.scss";
 import {
   AppBar,
+  Badge,
+  Box,
   CssBaseline,
   Divider,
   Drawer,
   Hidden,
   IconButton,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
-import { Menu } from "@mui/icons-material";
+import { Menu as MenuIcon, Notifications } from "@mui/icons-material";
 import Footer from "../Footer";
 import DrawerContent from "./DrawerContent";
 import { useRouter } from "next/router";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import NotificationsButton from "./NotificationsButton";
 
 function ResponsiveDrawer({ children, documentHeading, window }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -53,11 +58,21 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
             onClick={handleDrawerToggle}
             className={styles.menuButton}
           >
-            <Menu />
+            <MenuIcon />
           </IconButton>
-          <Typography variant="h5" noWrap>
-            {documentHeading}
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flex: 1,
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+            }}
+          >
+            <Typography variant="h5" noWrap>
+              {documentHeading}
+            </Typography>
+            <NotificationsButton/>
+          </Box>
         </Toolbar>
       </AppBar>
       <nav className={styles.drawer} aria-label="mailbox folders">
