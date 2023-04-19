@@ -117,12 +117,14 @@ export default function ProductsPage() {
     newFormData.append("description", formData.description);
     newFormData.append("category", formData.category);
     newFormData.append("rent_amount", formData.price);
-    newFormData.append("photo", formData.imageFile);
+    
 
     console.log(newFormData);
     if (type === "Add") {
+      newFormData.append("photo", formData.imageFile);
       addProductDetails.mutate(newFormData);
     } else if (type === "Edit") {
+      newFormData.append("product_photo", formData.imageFile);
       newFormData.append("product_id", formData.prdId);
       updateProductDetails.mutate(newFormData);
     }
