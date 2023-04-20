@@ -41,7 +41,7 @@ export const getUserAddress = () => {
 };
 
 export const getUserWallet = () => {
-  return makeAuthGetCall("get_user_address");
+  return makeAuthGetCall("get_wallet_balance");
 };
 
 export const addUserAddress = (formData) => {

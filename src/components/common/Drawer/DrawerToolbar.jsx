@@ -14,21 +14,21 @@ function DrawerToolbar() {
   const { user, setSnackbar } = useContext(GlobalContext);
 
   // Pending for tomorrow
-  // const { data: walletData } = useQuery({
-  //   queryKey: ["getUserWallet"],
-  //   queryFn: getUserWallet,
-  //   onError: (error) => {
-  //     console.log("getAllProducts on error: ", error);
-  //     setSnackbar({
-  //       isOpen: true,
-  //       message: getErrorMessage(error),
-  //       severity: "error",
-  //     });
-  //   },
-  //   staleTime: 1000 * 60 * 10,
-  //   cacheTime: 1000 * 60 * 20,
-  // });
-  // console.log("walletData: ", walletData);
+  const { data: walletData } = useQuery({
+    queryKey: ["getUserWallet"],
+    queryFn: getUserWallet,
+    onError: (error) => {
+      console.log("getAllProducts on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+    },
+    staleTime: 1000 * 60 * 10,
+    cacheTime: 1000 * 60 * 20,
+  });
+  console.log("walletData: ", walletData);
 
   return (
     <div>
@@ -50,7 +50,7 @@ function DrawerToolbar() {
           {`Welcome ${user?.first_name} ${user?.last_name}`}
         </Typography>
         <Typography variant="subtitle2" sx={{ fontWeight: "700" }} noWrap>
-          {`Wallet Balance: - ₹ 50`}
+          {`Wallet Balance: - ₹ ${walletData?.response || 0}`}
         </Typography>
       </div>
     </div>
