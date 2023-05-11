@@ -28,7 +28,9 @@ function DrawerToolbar() {
     staleTime: 1000 * 60 * 10,
     cacheTime: 1000 * 60 * 20,
   });
-  console.log("walletData: ", walletData);
+
+  // To check the walletData value
+  // console.log("walletData: ", walletData);
 
   return (
     <div>
