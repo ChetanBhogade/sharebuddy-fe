@@ -87,6 +87,7 @@ function ChatDetailsPage() {
         <Paper elevation={2} className={styles.container}>
           <div className={styles.messagesContainer}>
             {messagesListData &&
+              typeof messagesListData.response !== "string" &&
               messagesListData.response.length > 0 &&
               messagesListData.response?.map((msg) => {
                 return (
