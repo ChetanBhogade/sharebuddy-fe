@@ -40,6 +40,10 @@ export const getUserAddress = () => {
   return makeAuthGetCall("get_user_address");
 };
 
+export const getUserProfile = (userId) => {
+  return makeAuthGetCall(`get_user_profile?user_id=${userId}`);
+};
+
 export const getUserWallet = () => {
   return makeAuthGetCall("get_wallet_balance");
 };

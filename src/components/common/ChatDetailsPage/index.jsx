@@ -7,11 +7,17 @@ import { Send } from "@mui/icons-material";
 import classNames from "classnames";
 import moment from "moment";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getMessagesList, sendMessageToFriend } from "@/services/chats";
+import {
+  getChatContactList,
+  getMessagesList,
+  sendMessageToFriend,
+} from "@/services/chats";
 import { getErrorMessage } from "@/utils/commonFunctions";
 import { useRouter } from "next/router";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import { ImageUrls } from "@/constants/images";
+import { getUserProfile } from "@/services/auth";
+import { backendMediaAPI } from "@/constants/BaseUrls";
 
 function ChatDetailsPage() {
   const [messageText, setMessageText] = useState("");
@@ -19,6 +25,21 @@ function ChatDetailsPage() {
   const router = useRouter();
   const { setSnackbar, setIsBackdropLoading, user } = useContext(GlobalContext);
   const queryClient = useQueryClient();
+
+  const { data: friendsData } = useQuery({
+    queryKey: ["getUserProfile"],
+    queryFn: () => getUserProfile(router?.query?.chatId),
+    enabled: router.query?.chatId?.length > 1,
+    onError: (error) => {
+      console.log("getUserProfile on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+    },
+  });
+  console.log("friendsData: ", friendsData);
 
   const { data: messagesListData } = useQuery({
     queryKey: ["getMessagesList"],
@@ -75,14 +96,14 @@ function ChatDetailsPage() {
       <ResponsiveDrawer documentHeading={"Conversations"}>
         <div className={styles.userDetailsContainer}>
           <Avatar
-            alt={user?.first_name}
+            alt={`${friendsData?.response?.first_name} ${friendsData?.response?.last_name}`}
             src={
-              user?.photo
-                ? backendMediaAPI + user.photo
+              friendsData?.response?.profile_photo
+                ? backendMediaAPI + friendsData?.response?.profile_photo
                 : ImageUrls.defaultAvatar
             }
           />
-          <span>{user?.first_name}</span>
+          <span>{`${friendsData?.response?.first_name} ${friendsData?.response?.last_name}`}</span>
         </div>
         <Paper elevation={2} className={styles.container}>
           <div className={styles.messagesContainer}>

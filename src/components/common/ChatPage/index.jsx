@@ -68,7 +68,7 @@ function ChatPage() {
                           >
                             <Badge
                               badgeContent={friend?.unread_count}
-                              color="secondary"
+                              color="error"
                             >
                               <Mail />
                             </Badge>
