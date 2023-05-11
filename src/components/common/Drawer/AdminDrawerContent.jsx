@@ -17,6 +17,7 @@ import {
   Chat,
   Money,
   CurrencyRupee,
+  ThumbDownAlt,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
 import { GlobalContext } from "@/contexts/GlobalContext";
@@ -31,39 +32,39 @@ function AdminDrawerContent() {
       <DrawerToolbar />
       <Divider />
       <List component="nav" aria-labelledby="navbar-list">
-        <ListItemButton onClick={() => router.push("/profile")}>
+        <ListItemButton onClick={() => router.push("/all-users")}>
           <ListItemIcon>
             <AccountBox style={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Profile" />
+          <ListItemText primary="Users" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => router.push("/products")}>
+        <ListItemButton onClick={() => router.push("/all-products")}>
           <ListItemIcon>
             <Category style={{ color: "#fff" }} />
           </ListItemIcon>
           <ListItemText primary="Products" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => router.push("/wallet")}>
-          <ListItemIcon>
-            <CurrencyRupee style={{ color: "#fff" }} />
-          </ListItemIcon>
-          <ListItemText primary="Wallet" />
-        </ListItemButton>
-
-        <ListItemButton onClick={() => router.push("/quotes")}>
+        <ListItemButton onClick={() => router.push("/all-quotes")}>
           <ListItemIcon>
             <ReceiptLong style={{ color: "#fff" }} />
           </ListItemIcon>
           <ListItemText primary="Quotes" />
         </ListItemButton>
 
-        <ListItemButton onClick={() => router.push("/chat")}>
+        <ListItemButton onClick={() => router.push("/all-transactions")}>
           <ListItemIcon>
-            <Chat style={{ color: "#fff" }} />
+            <CurrencyRupee style={{ color: "#fff" }} />
           </ListItemIcon>
-          <ListItemText primary="Chat" />
+          <ListItemText primary="Transactions" />
+        </ListItemButton>
+
+        <ListItemButton onClick={() => router.push("/chat/complaints")}>
+          <ListItemIcon>
+            <ThumbDownAlt style={{ color: "#fff" }} />
+          </ListItemIcon>
+          <ListItemText primary="Complaints" />
         </ListItemButton>
       </List>
       <Divider />
