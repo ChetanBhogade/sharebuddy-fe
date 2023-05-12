@@ -21,7 +21,7 @@ import { backendMediaAPI } from "@/constants/BaseUrls";
 import { useRouter } from "next/router";
 import { getChatContactList } from "@/services/chats";
 import moment from "moment";
-import { getErrorMessage } from "@/utils/commonFunctions";
+import { getErrorMessage, sortListOfObjects } from "@/utils/commonFunctions";
 
 function ChatPage() {
   const { setSnackbar, user } = useContext(GlobalContext);
@@ -50,7 +50,11 @@ function ChatPage() {
         ) : (
           <List sx={{ width: "100%", bgcolor: "background.paper" }}>
             {allContactList &&
-              allContactList?.response?.map((friend) => {
+              sortListOfObjects(
+                allContactList?.response,
+                "timestamp",
+                false
+              )?.map((friend) => {
                 return (
                   <div key={friend.user_id}>
                     <ListItemButton
