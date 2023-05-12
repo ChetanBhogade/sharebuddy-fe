@@ -1,7 +1,12 @@
+import AllProductsPage from "@/components/AllProductsPage";
 import React from "react";
 
 function AllProducts() {
-  return <div>AllProducts</div>;
+  return (
+    <div>
+      <AllProductsPage />
+    </div>
+  );
 }
 
 export default AllProducts;

@@ -13,7 +13,7 @@ function a11yProps(index) {
   };
 }
 
-function WalletPage() {
+function AllTransactionsPage() {
   const [sectionState, setSectionState] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -55,4 +55,4 @@ function WalletPage() {
   );
 }
 
-export default WalletPage;
+export default AllTransactionsPage;

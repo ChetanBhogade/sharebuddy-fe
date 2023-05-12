@@ -45,7 +45,11 @@ export default function Home() {
     ) {
       router.push("/verify");
     } else {
-      router.push("/profile");
+      if (userData?.response?.is_superuser) {
+        router.push("/all-users");
+      } else {
+        router.push("/profile");
+      }
     }
   };
 
