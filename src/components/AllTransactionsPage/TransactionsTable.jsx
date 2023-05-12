@@ -20,6 +20,8 @@ function TransactionsTable({ transactionsList = [], showActions = false }) {
             <StyledTableCell align="left">Product Name</StyledTableCell>
             <StyledTableCell align="right">Amount</StyledTableCell>
             <StyledTableCell align="left">Type</StyledTableCell>
+            <StyledTableCell align="left">From</StyledTableCell>
+            <StyledTableCell align="left">To</StyledTableCell>
             <StyledTableCell align="left">Status</StyledTableCell>
             {showActions && (
               <StyledTableCell align="right">Actions</StyledTableCell>
@@ -36,6 +38,12 @@ function TransactionsTable({ transactionsList = [], showActions = false }) {
                 {Number(row.amount).toFixed(2)}
               </StyledTableCell>
               <StyledTableCell align="left">{row.ttype}</StyledTableCell>
+              <StyledTableCell align="left">
+                {row.from_user?.full_name}
+              </StyledTableCell>
+              <StyledTableCell align="left">
+                {row.to_user?.full_name}
+              </StyledTableCell>
               <StyledTableCell align="left">{row.status}</StyledTableCell>
               {showActions && (
                 <StyledTableCell align="right">

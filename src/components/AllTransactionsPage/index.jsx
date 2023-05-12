@@ -42,7 +42,7 @@ function AllTransactionsPage() {
   return (
     <PageLayout>
       <ResponsiveDrawer documentHeading={"Transactions"}>
-        <h2>Complete your pending transactions</h2>
+        <h2>All transactions List</h2>
 
         {/* <AppBar
           sx={{
