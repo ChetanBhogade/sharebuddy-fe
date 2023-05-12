@@ -10,6 +10,7 @@ export const ProductCategories = [
   "ELECTRONIC",
   "FOOTWEAR",
   "ACCESSORIES",
+  "STATIONARY",
 ];
 
 export const ProductSharingTypes = {

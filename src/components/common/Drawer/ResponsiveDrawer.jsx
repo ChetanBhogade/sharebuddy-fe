@@ -21,6 +21,7 @@ import DrawerContent from "./DrawerContent";
 import { useRouter } from "next/router";
 import { GlobalContext } from "@/contexts/GlobalContext";
 import NotificationsButton from "./NotificationsButton";
+import AdminDrawerContent from "./AdminDrawerContent";
 
 function ResponsiveDrawer({ children, documentHeading, window }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -105,7 +106,7 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
             variant="permanent"
             open
           >
-            <DrawerContent />
+            {user?.is_superuser ? <AdminDrawerContent /> : <DrawerContent />}
           </Drawer>
         </Hidden>
       </nav>

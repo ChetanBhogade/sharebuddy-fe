@@ -24,7 +24,7 @@ import moment from "moment";
 import { getErrorMessage } from "@/utils/commonFunctions";
 
 function ChatPage() {
-  const { setSnackbar } = useContext(GlobalContext);
+  const { setSnackbar, user } = useContext(GlobalContext);
   const router = useRouter();
 
   const { data: allContactList } = useQuery({
@@ -68,7 +68,7 @@ function ChatPage() {
                           >
                             <Badge
                               badgeContent={friend?.unread_count}
-                              color="secondary"
+                              color="error"
                             >
                               <Mail />
                             </Badge>

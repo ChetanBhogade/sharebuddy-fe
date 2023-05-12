@@ -18,7 +18,7 @@ function DrawerToolbar() {
     queryKey: ["getUserWallet"],
     queryFn: getUserWallet,
     onError: (error) => {
-      console.log("getAllProducts on error: ", error);
+      console.log("getUserWallet on error: ", error);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),
