@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import {
   addProducts,
-  getAllProducts,
+  getMyProducts,
   removeProduct,
   updateProduct,
 } from "@/services/products";
@@ -32,10 +32,10 @@ export default function ProductsPage() {
   const queryClient = useQueryClient();
 
   const { data: allUserDataResponse } = useQuery({
-    queryKey: ["getAllProducts"],
-    queryFn: getAllProducts,
+    queryKey: ["getMyProducts"],
+    queryFn: getMyProducts,
     onError: (error) => {
-      console.log("getAllProducts on error: ", error);
+      console.log("getMyProducts on error: ", error);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),
@@ -71,7 +71,7 @@ export default function ProductsPage() {
       severity: "success",
     });
     setIsBackdropLoading(false);
-    queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
+    queryClient.invalidateQueries({ queryKey: ["getMyProducts"] });
   };
 
   const productApiOnError = (error) => {
@@ -117,7 +117,6 @@ export default function ProductsPage() {
     newFormData.append("description", formData.description);
     newFormData.append("category", formData.category);
     newFormData.append("rent_amount", formData.price);
-    
 
     console.log(newFormData);
     if (type === "Add") {
@@ -204,7 +203,11 @@ export default function ProductsPage() {
       width: 120,
       renderCell: (params) => {
         return (
-          <Stack>{Moment(params.row.created_date, "YYYY-MM-DDTHH:mm:ss").format("DD-MMM-YYYY")}</Stack>
+          <Stack>
+            {Moment(params.row.created_date, "YYYY-MM-DDTHH:mm:ss").format(
+              "DD-MMM-YYYY"
+            )}
+          </Stack>
         );
       },
     },
@@ -214,7 +217,11 @@ export default function ProductsPage() {
       width: 120,
       renderCell: (params) => {
         return (
-          <Stack>{Moment(params.row.updated_date, "YYYY-MM-DDTHH:mm:ss").format("DD-MMM-YYYY")}</Stack>
+          <Stack>
+            {Moment(params.row.updated_date, "YYYY-MM-DDTHH:mm:ss").format(
+              "DD-MMM-YYYY"
+            )}
+          </Stack>
         );
       },
     },

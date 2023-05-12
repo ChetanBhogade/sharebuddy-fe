@@ -4,7 +4,7 @@ import React from "react";
 function Complaints() {
   return (
     <div>
-      <ChatPage />
+      <ChatPage isForAdmin={true} />
     </div>
   );
 }

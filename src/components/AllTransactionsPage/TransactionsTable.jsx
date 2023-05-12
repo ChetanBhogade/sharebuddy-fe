@@ -11,19 +11,16 @@ import React from "react";
 import { StyledTableCell, StyledTableRow } from "../common/StyledTable";
 import { CheckCircleOutline, DeleteForever } from "@mui/icons-material";
 
-function TransactionsTable({
-  transactionsList = [{ csdvf: "ds  " }],
-  showActions = false,
-}) {
+function TransactionsTable({ transactionsList = [], showActions = false }) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell align="left">Quote Name</StyledTableCell>
+            <StyledTableCell align="left">Product Name</StyledTableCell>
             <StyledTableCell align="right">Amount</StyledTableCell>
-            <StyledTableCell align="center">Type</StyledTableCell>
-            <StyledTableCell align="center">Status</StyledTableCell>
+            <StyledTableCell align="left">Type</StyledTableCell>
+            <StyledTableCell align="left">Status</StyledTableCell>
             {showActions && (
               <StyledTableCell align="right">Actions</StyledTableCell>
             )}
@@ -31,11 +28,15 @@ function TransactionsTable({
         </TableHead>
         <TableBody>
           {transactionsList.map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell align="left">{row.name}</StyledTableCell>
-              <StyledTableCell align="right">{row.calories}</StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
+            <StyledTableRow key={row.updated_date}>
+              <StyledTableCell align="left">
+                {row.quote?.product?.name}
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                {Number(row.amount).toFixed(2)}
+              </StyledTableCell>
+              <StyledTableCell align="left">{row.ttype}</StyledTableCell>
+              <StyledTableCell align="left">{row.status}</StyledTableCell>
               {showActions && (
                 <StyledTableCell align="right">
                   <IconButton aria-label="complete-transaction" color="success">

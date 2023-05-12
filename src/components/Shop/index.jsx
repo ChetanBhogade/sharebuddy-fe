@@ -32,7 +32,7 @@ function ShopPage() {
     queryKey: ["getShopProducts"],
     queryFn: getShopProducts,
     onError: (error) => {
-      console.log("getAllProducts on error: ", error);
+      console.log("getShopProducts on error: ", error);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),

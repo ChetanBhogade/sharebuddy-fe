@@ -38,7 +38,7 @@ export default function NotificationsButton() {
     queryKey: ["getInAppNotification"],
     queryFn: getInAppNotification,
     onError: (error) => {
-      console.log("getAllProducts on error: ", error);
+      console.log("getInAppNotification on error: ", error);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),

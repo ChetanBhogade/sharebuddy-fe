@@ -64,11 +64,12 @@ function LoginPage() {
       }
 
       if (formData.password?.length < 8) {
-        setErrorStates({
-          ...errorStates,
-          password: "Password should be 8 characters long",
-        });
-        return false;
+        // Removing password validation
+        // setErrorStates({
+        //   ...errorStates,
+        //   password: "Password should be 8 characters long",
+        // });
+        // return false;
       } else {
         setErrorStates({
           ...errorStates,

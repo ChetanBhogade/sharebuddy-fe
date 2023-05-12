@@ -12,6 +12,14 @@ export const getMyQuotes = () => {
   return makeAuthGetCall("get_my_quotes");
 };
 
+export const getAllQuotes = () => {
+  return makeAuthGetCall("get_all_quotes");
+};
+
+export const getAllTransactions = () => {
+  return makeAuthGetCall("get_all_transactions");
+};
+
 export const getQuotesDetails = (quoteId) => {
   return makeAuthGetCall(`get_quote_details?quote_id=${quoteId}`);
 };
