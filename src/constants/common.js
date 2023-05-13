@@ -34,4 +34,5 @@ export const notificationRedirects = {
   FRIEND: "/profile",
   FRIEND_REQUEST: "/profile",
   PRODUCT: "/shop",
+  CHAT: "/chat",
 };
