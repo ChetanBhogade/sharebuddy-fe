@@ -40,6 +40,14 @@ export const getUserAddress = () => {
   return makeAuthGetCall("get_user_address");
 };
 
+export const getUserProfile = (userId) => {
+  return makeAuthGetCall(`get_user_profile?user_id=${userId}`);
+};
+
+export const getUserWallet = () => {
+  return makeAuthGetCall("get_wallet_balance");
+};
+
 export const addUserAddress = (formData) => {
   return makeAuthPostCall("add_address", formData);
 };
@@ -51,6 +59,7 @@ export const updateUserAddress = (formData) => {
 export const updateUserDetails = (formData) => {
   return makeAuthPostCall("update_user_details", formData);
 };
-export const getAllProducts = () => {
-  return makeAuthGetCall("get_all_products");
+
+export const deleteUser = (formData) => {
+  return makeAuthPostCall("delete_user", formData);
 };

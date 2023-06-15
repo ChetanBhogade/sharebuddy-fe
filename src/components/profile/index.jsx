@@ -4,7 +4,7 @@ import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import ProfileHeader from "./ProfileHeader";
 import TabPanel from "../common/TabPanel";
 import ProfileForm from "./ProfileForm";
-import ProfileFollowers from "./ProfileFollowers";
+import ProfileAction from "./ProfileAction";
 import ProfileFriends from "./ProfileFriends";
 
 function ProfilePage() {
@@ -22,7 +22,7 @@ function ProfilePage() {
           <ProfileForm />
         </TabPanel>
         <TabPanel value={tabValue} index={1}>
-          <ProfileFollowers />
+          <ProfileAction />
         </TabPanel>
         <TabPanel value={tabValue} index={2}>
           <ProfileFriends />

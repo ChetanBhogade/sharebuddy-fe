@@ -1,16 +1,31 @@
-import { Avatar, Fab, Paper } from "@mui/material";
+import { Avatar, Paper } from "@mui/material";
 import React from "react";
 import styles from "./ProductCard.module.scss";
 import Image from "next/image";
 import { ImageUrls } from "@/constants/images";
-import { AddShoppingCart } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
-function ProductCard() {
+function ProductCard({
+  title,
+  amount,
+  productId,
+  userImage,
+  userName,
+  productImage,
+}) {
+  const router = useRouter();
+
   return (
-    <Paper className={styles.cardPaper}>
+    <Paper
+      onClick={() => {
+        console.log("paper clicked");
+        router.push(`/shop/${productId}`);
+      }}
+      className={styles.cardPaper}
+    >
       <div className={styles.imgWrapper}>
         <Image
-          src={ImageUrls.product6}
+          src={productImage || ImageUrls.product6}
           alt="product image"
           priority
           style={{
@@ -18,20 +33,15 @@ function ProductCard() {
           }}
           fill
         />
-        <Fab
-          color="primary"
-          aria-label="add"
-          className={styles.cartBtn}
-          size="small"
-        >
-          <AddShoppingCart />
-        </Fab>
       </div>
       <div className={styles.descriptionArea}>
-        <span className={styles.productTitle}>Sports Shoes Pro</span>
+        <span className={styles.productTitle}>{title}</span>
         <div className={styles.infoSection}>
-          <Avatar alt="User Image" src={ImageUrls.avatar2} />
-          <span className={styles.cardPrice}>₹ 2500</span>
+          <div className={styles.userInfo}>
+            <Avatar alt="User Image" src={userImage || ImageUrls.avatar2} />
+            <span>{userName}</span>
+          </div>
+          <span className={styles.cardPrice}>₹ {amount}</span>
         </div>
       </div>
     </Paper>

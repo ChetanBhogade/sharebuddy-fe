@@ -6,6 +6,9 @@ export const getErrorMessage = (errorObj) => {
   if (errorObj?.response?.data?.message?.length > 1) {
     return errorObj?.response?.data?.message;
   }
+  if (errorObj?.response?.data?.response?.length > 1) {
+    return errorObj?.response?.data?.response;
+  }
   if (errorObj?.message.length > 1) {
     return errorObj?.message;
   }

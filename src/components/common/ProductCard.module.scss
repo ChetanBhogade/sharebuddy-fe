@@ -1,6 +1,7 @@
 .cardPaper {
   border-radius: 12px;
   padding: 8px;
+  cursor: pointer;
 }
 
 .imgWrapper {
@@ -38,4 +39,11 @@
 .cardPrice {
   font-size: 20px;
   font-weight: 600;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }

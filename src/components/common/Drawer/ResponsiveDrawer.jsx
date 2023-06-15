@@ -1,24 +1,34 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./ResponsiveDrawer.module.scss";
 import {
   AppBar,
+  Badge,
+  Box,
   CssBaseline,
   Divider,
   Drawer,
   Hidden,
   IconButton,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
-import { Menu } from "@mui/icons-material";
+import { Menu as MenuIcon, Notifications } from "@mui/icons-material";
 import Footer from "../Footer";
 import DrawerContent from "./DrawerContent";
+import { useRouter } from "next/router";
+import { GlobalContext } from "@/contexts/GlobalContext";
+import NotificationsButton from "./NotificationsButton";
+import AdminDrawerContent from "./AdminDrawerContent";
 
 function ResponsiveDrawer({ children, documentHeading, window }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const { user } = useContext(GlobalContext);
   const theme = useTheme();
+  const router = useRouter();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -26,6 +36,17 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
+
+  // commenting effect call
+  // useEffect(() => {
+  //   if (
+  //     user === null &&
+  //     !user?.is_mobile_number_verified &&
+  //     !user?.is_email_verified
+  //   ) {
+  //     router.push("/");
+  //   }
+  // }, [user]);
 
   return (
     <div className={styles.root}>
@@ -39,11 +60,24 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
             onClick={handleDrawerToggle}
             className={styles.menuButton}
           >
-            <Menu />
+            <MenuIcon />
           </IconButton>
-          <Typography variant="h5" noWrap>
-            {documentHeading}
-          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flex: 1,
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+            }}
+          >
+            <Typography variant="h5" noWrap>
+              {documentHeading}
+            </Typography>
+            <div className={styles.notificationWrapper}>
+              <span>Notifications</span>
+              <NotificationsButton />
+            </div>
+          </Box>
         </Toolbar>
       </AppBar>
       <nav className={styles.drawer} aria-label="mailbox folders">
@@ -72,7 +106,7 @@ function ResponsiveDrawer({ children, documentHeading, window }) {
             variant="permanent"
             open
           >
-            <DrawerContent />
+            {user?.is_superuser ? <AdminDrawerContent /> : <DrawerContent />}
           </Drawer>
         </Hidden>
       </nav>

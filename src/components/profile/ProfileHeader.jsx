@@ -37,10 +37,17 @@ function ProfileHeader({ handleChange, value }) {
             priority
           />
         </div>
-        <span className={styles.profileHeaderUsername}>Dummy User</span>
-        <Tabs value={value} onChange={handleChange} aria-label="basic-tabs">
+        <span
+          className={styles.profileHeaderUsername}
+        >{`${user?.first_name} ${user?.last_name}`}</span>
+        <Tabs
+          allowScrollButtonsMobile
+          value={value}
+          onChange={handleChange}
+          aria-label="basic-tabs"
+        >
           <Tab label="Profile" {...a11yProps(0)} />
-          <Tab label="Followers" {...a11yProps(1)} />
+          <Tab label="Friend Request" {...a11yProps(1)} />
           <Tab label="Friends" {...a11yProps(2)} />
         </Tabs>
       </Paper>

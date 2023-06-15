@@ -16,6 +16,7 @@ export default function Home() {
     queryFn: getLoggedInUserDetails,
     onError: (error) => {
       console.log("getLoggedInUserDetails on error: ", error);
+      setIsBackdropLoading(false);
       setSnackbar({
         isOpen: true,
         message: getErrorMessage(error),
@@ -25,14 +26,12 @@ export default function Home() {
         setUser(null);
         router.push("/login");
       }
-      setIsBackdropLoading(false);
     },
   });
 
   console.log("query response: ", { isLoading, userData });
 
   const handleRedirect = (userData) => {
-    setIsBackdropLoading(isLoading);
     if (!userData) return;
 
     if (userData && userData.response) {
@@ -46,7 +45,11 @@ export default function Home() {
     ) {
       router.push("/verify");
     } else {
-      router.push("/profile");
+      if (userData?.response?.is_superuser) {
+        router.push("/all-users");
+      } else {
+        router.push("/profile");
+      }
     }
   };
 

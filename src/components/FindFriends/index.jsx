@@ -3,15 +3,17 @@ import PageLayout from "../common/PageLayout";
 import ResponsiveDrawer from "../common/Drawer/ResponsiveDrawer";
 import { Divider, Grid, TextField } from "@mui/material";
 import ProfileUserCard from "../profile/ProfileUserCard";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllUsers } from "@/services/auth";
 import { getErrorMessage, sortListOfObjects } from "@/utils/commonFunctions";
 import { GlobalContext } from "@/contexts/GlobalContext";
+import { removeFriend, sendFriendRequest } from "@/services/friends";
 
 function FindFriendsPage() {
   const [searchText, setSearchText] = useState("");
 
-  const { setSnackbar } = useContext(GlobalContext);
+  const { setSnackbar, setIsBackdropLoading, user } = useContext(GlobalContext);
+  const queryClient = useQueryClient();
 
   const { data: allUserDataResponse } = useQuery({
     queryKey: ["getAllUsers"],
@@ -26,15 +28,97 @@ function FindFriendsPage() {
     },
   });
 
+  const sendFriendRequestMutation = useMutation({
+    mutationFn: (data) => sendFriendRequest(data),
+    onSuccess: (data) => {
+      console.log(
+        "sendFriendRequestMutation sendFriendRequest on success: ",
+        data
+      );
+      setIsBackdropLoading(false);
+      queryClient.invalidateQueries({ queryKey: ["getAllUsers"] });
+    },
+    onError: (error) => {
+      console.log(
+        "sendFriendRequestMutation sendFriendRequest on error: ",
+        error
+      );
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
+
+  const removeFriendMutation = useMutation({
+    mutationFn: (data) => removeFriend(data),
+    onSuccess: (data) => {
+      console.log("removeFriendMutation removeFriend on success: ", data);
+      setSnackbar({
+        isOpen: true,
+        message: data?.response || "Form Submitted Successfully.",
+        severity: "success",
+      });
+      setIsBackdropLoading(false);
+      queryClient.invalidateQueries({ queryKey: ["getAllUsers"] });
+    },
+    onError: (error) => {
+      console.log("removeFriendMutation removeFriend on error: ", error);
+      setSnackbar({
+        isOpen: true,
+        message: getErrorMessage(error),
+        severity: "error",
+      });
+      setIsBackdropLoading(false);
+    },
+  });
+
+  const handleRemoveFriendClick = (userId) => {
+    console.log("removing friend with id: ", userId);
+    const newFormData = new FormData();
+    newFormData.append("friend_id", userId);
+
+    removeFriendMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
+  };
+
+  const handleAddFriendClick = (selectedUserId) => {
+    console.log("selected user id is: ", selectedUserId);
+    setIsBackdropLoading(true);
+    const newFormData = new FormData();
+    newFormData.append("receiver_id", selectedUserId);
+    sendFriendRequestMutation.mutate(newFormData);
+    setIsBackdropLoading(true);
+  };
+
   const filterUsers = (usersList) => {
     return usersList.filter((user) => {
-      const firstName = user.first_name?.toLowerCase();
-      return firstName && firstName.indexOf(searchText) > -1;
+      const fullName =
+        user.first_name?.toLowerCase() + " " + user.last_name?.toLowerCase();
+      return fullName && fullName.indexOf(searchText.toLowerCase()) > -1;
     });
   };
 
   const handleOnSearchTextChange = (event) => {
     setSearchText(event.target.value);
+  };
+
+  const getButtonType = (frdStatus) => {
+    switch (frdStatus) {
+      case "friends":
+        return "delete";
+
+      case "non_friends":
+        return "add";
+
+      case "pending":
+        return "pending";
+
+      default:
+        return "add";
+    }
   };
 
   return (
@@ -59,18 +143,30 @@ function FindFriendsPage() {
         <Grid
           container
           alignItems="center"
-          justifyContent="space-around"
-          gap={2}
+          justifyContent="space-evenly"
+          rowGap={2}
         >
           {allUserDataResponse &&
             filterUsers(
               sortListOfObjects(allUserDataResponse?.response, "first_name")
             ).map((userObj) => {
               return (
-                !userObj.is_superuser && (
-                  <Grid key={userObj.user_id} item xs={12} md={4.5} lg={3.5}>
+                !userObj.is_superuser &&
+                user.user_id !== userObj.user_id && (
+                  <Grid key={userObj.user_id} item xs={12} md={4.8} lg={3.5}>
                     <ProfileUserCard
                       username={`${userObj.first_name} ${userObj.last_name}`}
+                      profileImg={userObj.profile_photo}
+                      handleClick={() => {
+                        if (userObj?.friend_status === "friends") {
+                          handleRemoveFriendClick(userObj?.user_id);
+                        } else if (userObj?.friend_status === "non_friends") {
+                          handleAddFriendClick(userObj?.user_id);
+                        } else {
+                          return;
+                        }
+                      }}
+                      buttonType={getButtonType(userObj?.friend_status)}
                     />
                   </Grid>
                 )
